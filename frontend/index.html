@@ -52,6 +52,23 @@
             text-decoration: underline;
         }
 
+        .signup-link {
+    margin-top: 16px;
+    text-align: center;
+    color: #aaa;
+    font-size: 12px;
+}
+
+.signup-link a {
+    color: #35d49a;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
         .reset-box {
             display: none;
             margin-top: 18px;
@@ -196,6 +213,64 @@
 
             </form>
 
+            <p class="signup-link">
+    New user? <a href="#" id="showSignup">SIGN UP</a>
+</p>
+
+<div class="reset-box" id="signupBox">
+
+    <h3>CREATE ACCOUNT</h3>
+
+    <p>
+        Create your account to access the Hyper-Speed monitoring system.
+    </p>
+
+    <div class="input-group">
+        <label for="signupUsername">USERNAME</label>
+        <input
+            type="text"
+            id="signupUsername"
+            placeholder="Choose username"
+            autocomplete="username"
+        >
+    </div>
+
+    <div class="input-group">
+        <label for="signupPassword">PASSWORD</label>
+        <input
+            type="password"
+            id="signupPassword"
+            placeholder="Create password"
+            autocomplete="new-password"
+        >
+    </div>
+
+    <div class="input-group">
+        <label for="confirmPassword">CONFIRM PASSWORD</label>
+        <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirm password"
+            autocomplete="new-password"
+        >
+    </div>
+
+    <button type="button" id="signupButton">
+        CREATE ACCOUNT
+    </button>
+
+    <p
+        id="signupMessage"
+        class="login-message">
+    </p>
+
+    <p class="signup-link">
+        Already have an account?
+        <a href="#" id="backToLogin">LOGIN</a>
+    </p>
+
+</div>
+
 
             <!-- RESET PASSWORD BOX -->
             <div
@@ -240,182 +315,347 @@
 
     </main>
 
-
     <script>
+    // =====================================
+    // ELEMENTS
+    // =====================================
 
-        /* =====================================
-           NEW LOGIN CREDENTIALS
-        ===================================== */
+    const loginForm = document.getElementById("loginForm");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const loginMessage = document.getElementById("loginMessage");
 
-        const VALID_USERNAME = "rehan";
-        const VALID_PASSWORD = "Rehan@123";
+    const togglePassword = document.getElementById("togglePassword");
 
+    const forgotPassword = document.getElementById("forgotPassword");
+    const resetBox = document.getElementById("resetBox");
+    const resetButton = document.getElementById("resetButton");
 
-        /* =====================================
-           ELEMENTS
-        ===================================== */
+    const showSignup = document.getElementById("showSignup");
+    const signupBox = document.getElementById("signupBox");
+    const signupButton = document.getElementById("signupButton");
 
-        const loginForm =
-            document.getElementById("loginForm");
+    const signupUsername = document.getElementById("signupUsername");
+    const signupPassword = document.getElementById("signupPassword");
+    const confirmPassword = document.getElementById("confirmPassword");
 
-        const usernameInput =
-            document.getElementById("username");
-
-        const passwordInput =
-            document.getElementById("password");
-
-        const loginMessage =
-            document.getElementById("loginMessage");
-
-        const togglePassword =
-            document.getElementById("togglePassword");
-
-        const forgotPassword =
-            document.getElementById("forgotPassword");
-
-        const resetBox =
-            document.getElementById("resetBox");
-
-        const resetButton =
-            document.getElementById("resetButton");
+    const signupMessage = document.getElementById("signupMessage");
+    const backToLogin = document.getElementById("backToLogin");
 
 
-        /* =====================================
-           SHOW / HIDE PASSWORD
-        ===================================== */
+    // =====================================
+    // SHOW / HIDE PASSWORD
+    // =====================================
 
-        togglePassword.addEventListener(
-            "click",
-            function () {
+    togglePassword.addEventListener("click", function () {
 
-                if (passwordInput.type === "password") {
+        if (passwordInput.type === "password") {
 
-                    passwordInput.type = "text";
+            passwordInput.type = "text";
+            togglePassword.textContent = "🙈";
+            togglePassword.title = "Hide password";
 
-                    togglePassword.textContent = "🙈";
+        } else {
 
-                    togglePassword.title =
-                        "Hide password";
-
-                } else {
-
-                    passwordInput.type = "password";
-
-                    togglePassword.textContent = "👁";
-
-                    togglePassword.title =
-                        "Show password";
-                }
-
-            }
-        );
+            passwordInput.type = "password";
+            togglePassword.textContent = "👁";
+            togglePassword.title = "Show password";
+        }
+    });
 
 
-        /* =====================================
-           LOGIN
-        ===================================== */
+    // =====================================
+    // LOGIN
+    // =====================================
 
-        loginForm.addEventListener(
-            "submit",
-            function (event) {
+    loginForm.addEventListener("submit", async function (event) {
 
-                event.preventDefault();
+        event.preventDefault();
 
-                const username =
-                    usernameInput.value.trim();
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
 
-                const password =
-                    passwordInput.value;
+        if (!username || !password) {
 
+            loginMessage.textContent =
+                "Please enter username and password.";
 
-                if (
-                    username === VALID_USERNAME &&
-                    password === VALID_PASSWORD
-                ) {
+            loginMessage.style.color = "#ff526b";
 
-                    loginMessage.textContent =
-                        "ACCESS GRANTED";
+            return;
+        }
 
-                    loginMessage.style.color =
-                        "#35d49a";
+        loginMessage.textContent = "AUTHENTICATING...";
+        loginMessage.style.color = "#e7bd67";
 
+        try {
 
-                    /* Open dashboard */
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
 
-                    setTimeout(
-                        function () {
+            const result = await response.json();
 
-                            window.location.href =
-                                "/dashboard";
-
-                        },
-                        500
-                    );
-
-                } else {
-
-                    loginMessage.textContent =
-                        "INVALID USERNAME OR PASSWORD";
-
-                    loginMessage.style.color =
-                        "#ff526b";
-                }
-
-            }
-        );
-
-
-        /* =====================================
-           FORGOT PASSWORD
-        ===================================== */
-
-        forgotPassword.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-
-                resetBox.style.display =
-                    "block";
-
-            }
-        );
-
-
-        /* =====================================
-           RESET
-        ===================================== */
-
-        resetButton.addEventListener(
-            "click",
-            function () {
-
-                usernameInput.value =
-                    VALID_USERNAME;
-
-                passwordInput.value =
-                    VALID_PASSWORD;
-
-                passwordInput.type =
-                    "text";
-
-                togglePassword.textContent =
-                    "🙈";
+            if (result.success) {
 
                 loginMessage.textContent =
-                    "NEW LOGIN READY";
+                    "ACCESS GRANTED — SYSTEM INITIALIZING...";
 
-                loginMessage.style.color =
-                    "#35d49a";
+                loginMessage.style.color = "#35d49a";
 
-                resetBox.style.display =
-                    "none";
+                setTimeout(function () {
 
+                    window.location.href = "/dashboard";
+
+                }, 700);
+
+            } else {
+
+                loginMessage.textContent =
+                    "ACCESS DENIED — " + result.message;
+
+                loginMessage.style.color = "#ff526b";
+
+                passwordInput.value = "";
+                passwordInput.focus();
             }
-        );
 
-    </script>
+        } catch (error) {
 
+            loginMessage.textContent =
+                "SERVER ERROR — PLEASE TRY AGAIN";
+
+            loginMessage.style.color = "#ff526b";
+        }
+    });
+
+
+    // =====================================
+    // FORGOT PASSWORD
+    // =====================================
+
+    forgotPassword.addEventListener("click", function (event) {
+
+        event.preventDefault();
+
+        resetBox.style.display = "block";
+        signupBox.style.display = "none";
+
+    });
+
+
+    // =====================================
+    // RESET DEMO LOGIN
+    // =====================================
+
+    resetButton.addEventListener("click", function () {
+
+        usernameInput.value = "rehan";
+        passwordInput.value = "Rehan@123";
+
+        passwordInput.type = "text";
+
+        togglePassword.textContent = "🙈";
+        togglePassword.title = "Hide password";
+
+        loginMessage.textContent = "NEW LOGIN READY";
+        loginMessage.style.color = "#35d49a";
+
+        resetBox.style.display = "none";
+    });
+
+
+    // =====================================
+    // SIGN UP
+    // =====================================
+
+    showSignup.addEventListener("click", function (event) {
+
+        event.preventDefault();
+
+        signupBox.style.display = "block";
+        resetBox.style.display = "none";
+
+        loginMessage.textContent = "";
+
+        signupUsername.focus();
+    });
+
+
+    // =====================================
+    // BACK TO LOGIN
+    // =====================================
+
+    backToLogin.addEventListener("click", function (event) {
+
+        event.preventDefault();
+
+        signupBox.style.display = "none";
+
+        signupMessage.textContent = "";
+
+        signupUsername.value = "";
+        signupPassword.value = "";
+        confirmPassword.value = "";
+
+    });
+
+
+    // =====================================
+    // CREATE ACCOUNT
+    // =====================================
+
+    signupButton.addEventListener("click", async function () {
+
+        const username = signupUsername.value.trim();
+        const password = signupPassword.value;
+        const confirm = confirmPassword.value;
+
+        if (!username || !password || !confirm) {
+
+            signupMessage.textContent =
+                "Please fill in all fields.";
+
+            signupMessage.style.color = "#ff526b";
+
+            return;
+        }
+
+        if (username.length < 3) {
+
+            signupMessage.textContent =
+                "Username must contain at least 3 characters.";
+
+            signupMessage.style.color = "#ff526b";
+
+            return;
+        }
+
+        if (password.length < 6) {
+
+            signupMessage.textContent =
+                "Password must contain at least 6 characters.";
+
+            signupMessage.style.color = "#ff526b";
+
+            return;
+        }
+
+        if (password !== confirm) {
+
+            signupMessage.textContent =
+                "Passwords do not match.";
+
+            signupMessage.style.color = "#ff526b";
+
+            return;
+        }
+
+        signupMessage.textContent = "CREATING ACCOUNT...";
+        signupMessage.style.color = "#e7bd67";
+
+        try {
+
+            const response = await fetch("/signup", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                signupMessage.textContent =
+                    "ACCOUNT CREATED — PLEASE LOGIN";
+
+                signupMessage.style.color = "#35d49a";
+
+                setTimeout(function () {
+
+                    signupBox.style.display = "none";
+
+                    signupUsername.value = "";
+                    signupPassword.value = "";
+                    confirmPassword.value = "";
+
+                    usernameInput.value = username;
+                    passwordInput.value = "";
+
+                    usernameInput.focus();
+
+                    loginMessage.textContent =
+                        "ACCOUNT CREATED — PLEASE LOGIN";
+
+                    loginMessage.style.color = "#35d49a";
+
+                }, 1200);
+
+            } else {
+
+                signupMessage.textContent = result.message;
+                signupMessage.style.color = "#ff526b";
+            }
+
+        } catch (error) {
+
+            signupMessage.textContent =
+                "SERVER ERROR — PLEASE TRY AGAIN";
+
+            signupMessage.style.color = "#ff526b";
+        }
+
+    });
+
+</script>
+
+   <script>
+
+    // your other JavaScript code...
+
+
+    // =====================================
+    // SIGN UP
+    // =====================================
+
+    const showSignupButton =
+        document.getElementById("showSignup");
+
+    const signupBoxElement =
+        document.getElementById("signupBox");
+
+    const signupButtonElement =
+        document.getElementById("signupButton");
+
+    showSignupButton.onclick = function (event) {
+
+        event.preventDefault();
+
+        signupBoxElement.style.display = "block";
+        resetBox.style.display = "none";
+
+        loginMessage.textContent = "";
+    };
+
+    // ...rest of signup code...
+
+
+</script>
 </body>
 
 </html>
