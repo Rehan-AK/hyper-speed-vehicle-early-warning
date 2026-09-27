@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hyper-Speed | Dashboard</title>
+
+    <style>
+        :root {
+            --bg: #050d17;
+            --sidebar: #071321;
+            --panel: #0a1727;
+            --panel2: #0d1d31;
+
+            --blue: #1c78c9;
+            --blue-bright: #37a9ff;
+            --green: #36d399;
+            --red: #ff526b;
+
+            --text: #eaf4ff;
+            --muted: #7d93a9;
+            --line: rgba(100,160,210,.14);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(28,120,201,.10),
+                    transparent 25%
+                ),
+                linear-gradient(
+                    145deg,
+                    #040a12,
+                    #071321 55%,
+                    #081827
+                );
+
+            color: var(--text);
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =========================
+           APP
+        ========================= */
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 245px;
+            min-height: 100vh;
+
+            padding: 24px 16px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #071321,
+                    #050e19
+                );
+
+            border-right:
+                1px solid var(--line);
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            padding: 8px 12px 25px;
+        }
+
+        .brand h1 {
+            font-size: 22px;
+            letter-spacing: 3px;
+        }
+
+        .brand p {
+            margin-top: 6px;
+
+            color: #6f8aa3;
+
+            font-size: 8px;
+            letter-spacing: 1.7px;
+        }
+
+        .system-badge {
+            margin-top: 15px;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--green);
+
+            font-size: 8px;
+            letter-spacing: 1px;
+        }
+
+        .system-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            box-shadow:
+                0 0 10px rgba(54,211,153,.8);
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .nav a {
+            padding: 12px 13px;
+
+            border: 1px solid transparent;
+            border-radius: 9px;
+
+            color: #8ea2b7;
+
+            font-size: 10px;
+            letter-spacing: 1px;
+
+            transition: .2s;
+        }
+
+        .nav a:hover {
+            color: #d9ebfb;
+
+            background:
+                rgba(55,169,255,.06);
+
+            border-color:
+                rgba(55,169,255,.12);
+        }
+
+        .nav a.active {
+            color: #e8f6ff;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(28,120,201,.28),
+                    rgba(28,120,201,.08)
+                );
+
+            border-color:
+                rgba(55,169,255,.28);
+
+            box-shadow:
+                inset 3px 0 0 var(--blue-bright);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+
+            padding: 14px 12px;
+
+            border-top:
+                1px solid var(--line);
+
+            color: #51677c;
+
+            font-size: 8px;
+            line-height: 1.7;
+            letter-spacing: 1px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 16px 20px;
+
+            border:
+                1px solid rgba(55,169,255,.16);
+
+            border-radius: 14px;
+
+            background:
+                rgba(8,20,34,.94);
+        }
+
+        .topbar h2 {
+            font-size: 13px;
+            letter-spacing: 1.8px;
+        }
+
+        .topbar span {
+            color: var(--muted);
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+
+        .user-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 50%;
+
+            background:
+                rgba(55,169,255,.12);
+
+            border:
+                1px solid rgba(55,169,255,.22);
+
+            color: var(--blue-bright);
+
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* =========================
+           WELCOME
+        ========================= */
+
+        .welcome {
+            margin: 24px 0 18px;
+        }
+
+        .welcome small {
+            color: var(--green);
+
+            font-size: 9px;
+            letter-spacing: 1.8px;
+        }
+
+        .welcome h1 {
+            margin-top: 7px;
+
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        .welcome p {
+            margin-top: 6px;
+
+            color: var(--muted);
+
+            font-size: 11px;
+        }
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .cards {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 14px;
+        }
+
+        .card {
+            padding: 18px;
+
+            border:
+                1px solid var(--line);
+
+            border-radius: 13px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(12,30,49,.92),
+                    rgba(7,18,31,.94)
+                );
+        }
+
+        .card-label {
+            color: #71879d;
+
+            font-size: 8px;
+            letter-spacing: 1.3px;
+        }
+
+        .card-value {
+            margin-top: 10px;
+
+            color: #eff8ff;
+
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .card-status {
+            margin-top: 5px;
+
+            color: var(--green);
+
+            font-size: 8px;
+            letter-spacing: 1px;
+        }
+
+        .card.blue {
+            border-top:
+                2px solid var(--blue-bright);
+        }
+
+        .card.green {
+            border-top:
+                2px solid var(--green);
+        }
+
+        .card.red {
+            border-top:
+                2px solid var(--red);
+        }
+
+        /* =========================
+           CONTENT GRID
+        ========================= */
+
+        .content-grid {
+            display: grid;
+
+            grid-template-columns:
+                1.7fr
+                1fr;
+
+            gap: 16px;
+
+            margin-top: 16px;
+        }
+
+        .panel {
+            padding: 20px;
+
+            border:
+                1px solid var(--line);
+
+            border-radius: 14px;
+
+            background:
+                rgba(7,19,32,.94);
+        }
+
+        .panel-header {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 18px;
+        }
+
+        .panel-header h3 {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+        }
+
+        .panel-header span {
+            color: var(--green);
+
+            font-size: 8px;
+            letter-spacing: 1px;
+        }
+
+        /* =========================
+           MONITOR PREVIEW
+        ========================= */
+
+        .monitor-preview {
+            min-height: 310px;
+
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+
+            border:
+                1px solid rgba(55,169,255,.10);
+
+            border-radius: 11px;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    rgba(55,169,255,.11),
+                    transparent 33%
+                ),
+                linear-gradient(
+                    rgba(255,255,255,.012) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.012) 1px,
+                    transparent 1px
+                ),
+                #050d17;
+
+            background-size:
+                auto,
+                35px 35px,
+                35px 35px,
+                auto;
+        }
+
+        .preview-ring {
+            position: absolute;
+
+            border-radius: 50%;
+
+            border:
+                1px solid rgba(55,169,255,.18);
+        }
+
+        .ring1 {
+            width: 125px;
+            height: 125px;
+        }
+
+        .ring2 {
+            width: 220px;
+            height: 220px;
+        }
+
+        .ring3 {
+            width: 315px;
+            height: 315px;
+        }
+
+        .preview-core {
+            position: relative;
+            z-index: 4;
+
+            width: 48px;
+            height: 58px;
+
+            clip-path:
+                polygon(
+                    50% 0,
+                    80% 25%,
+                    92% 72%,
+                    65% 100%,
+                    35% 100%,
+                    8% 72%,
+                    20% 25%
+                );
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #48b5ff,
+                    #15588c,
+                    #092238
+                );
+
+            box-shadow:
+                0 0 25px rgba(55,169,255,.25);
+        }
+
+        .preview-core::after {
+            content: "";
+
+            position: absolute;
+
+            left: 50%;
+            bottom: 11px;
+
+            width: 24px;
+            height: 3px;
+
+            transform:
+                translateX(-50%);
+
+            background: var(--green);
+
+            box-shadow:
+                0 0 10px rgba(54,211,153,.8);
+        }
+
+        .preview-vehicle {
+            position: absolute;
+
+            width: 13px;
+            height: 13px;
+
+            transform:
+                rotate(45deg);
+
+            border:
+                1px solid var(--red);
+
+            background:
+                rgba(255,82,107,.12);
+
+            box-shadow:
+                0 0 15px rgba(255,82,107,.5);
+        }
+
+        .v1 {
+            top: 23%;
+            right: 31%;
+        }
+
+        .v2 {
+            bottom: 22%;
+            left: 30%;
+
+            border-color: var(--green);
+
+            background:
+                rgba(54,211,153,.10);
+
+            box-shadow:
+                0 0 12px rgba(54,211,153,.35);
+        }
+
+        .preview-info {
+            position: absolute;
+
+            left: 15px;
+            bottom: 15px;
+
+            color: #7890a7;
+
+            font-size: 8px;
+            line-height: 1.8;
+            letter-spacing: .8px;
+        }
+
+        .preview-info strong {
+            color: var(--green);
+        }
+
+        .monitor-button {
+            margin-top: 13px;
+
+            width: 100%;
+
+            padding: 12px;
+
+            border:
+                1px solid rgba(55,169,255,.32);
+
+            border-radius: 9px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #12568e,
+                    #0a3152
+                );
+
+            color: #def1ff;
+
+            cursor: pointer;
+
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        /* =========================
+           QUICK STATUS
+        ========================= */
+
+        .status-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            padding: 12px 0;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.05);
+        }
+
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-row span:first-child {
+            color: #71879b;
+
+            font-size: 9px;
+        }
+
+        .status-row span:last-child {
+            color: var(--green);
+
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .alert-box {
+            margin-top: 18px;
+
+            padding: 14px;
+
+            border:
+                1px solid rgba(54,211,153,.16);
+
+            border-radius: 10px;
+
+            background:
+                rgba(54,211,153,.035);
+        }
+
+        .alert-box strong {
+            color: var(--green);
+
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        .alert-box p {
+            margin-top: 6px;
+
+            color: #73879a;
+
+            font-size: 9px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1050px) {
+
+            .sidebar {
+                width: 205px;
+            }
+
+            .cards {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+            }
+
+            .nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .sidebar-footer {
+                display: none;
+            }
+
+            .main {
+                padding: 12px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <h1>
+                HYPER-SPEED
+            </h1>
+
+            <p>
+                EARLY WARNING SYSTEM
+            </p>
+
+            <div class="system-badge">
+
+                <span class="system-dot"></span>
+
+                SYSTEM ONLINE
+
+            </div>
+
+        </div>
+
+
+        <nav class="nav">
+
+            <a
+                href="/dashboard"
+                class="active">
+                DASHBOARD
+            </a>
+
+            <a
+                href="/monitoring">
+                LIVE MONITORING
+            </a>
+
+            <a
+                href="/history">
+                EVENT HISTORY
+            </a>
+
+            <a
+                href="/settings">
+                SETTINGS
+            </a>
+
+            <a
+                href="/">
+                LOGOUT
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            ADVANCED PROXIMITY MONITORING
+
+            <br>
+
+            FASTER DRIVER RESPONSE
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="main">
+
+
+        <!-- TOP BAR -->
+
+        <div class="topbar">
+
+            <div>
+
+                <h2>
+                    CONTROL CENTER
+                </h2>
+
+                <span>
+                    VEHICLE SAFETY MONITORING
+                </span>
+
+            </div>
+
+
+            <div class="user-box">
+
+                <div>
+
+                    <div style="
+                        color:#dceeff;
+                        font-size:10px;
+                        text-align:right;
+                    ">
+                        REHAN
+                    </div>
+
+                    <div style="
+                        color:#637b91;
+                        font-size:8px;
+                        text-align:right;
+                        margin-top:3px;
+                    ">
+                        OPERATOR
+                    </div>
+
+                </div>
+
+
+                <div class="avatar">
+                    R
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- WELCOME -->
+
+        <section class="welcome">
+
+            <small>
+                MONITORING CONTROL CENTER
+            </small>
+
+            <h1>
+                Vehicle Safety Dashboard
+            </h1>
+
+            <p>
+                Monitor approaching traffic and receive
+                early driver warnings.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             KPI CARDS
+        ================================================== -->
+
+        <section class="cards">
+
+
+            <div class="card blue">
+
+                <div class="card-label">
+                    VEHICLES DETECTED
+                </div>
+
+                <div
+                    class="card-value"
+                    id="vehiclesDetected">
+                    0
+                </div>
+
+                <div class="card-status">
+                    TODAY
+                </div>
+
+            </div>
+
+
+            <div class="card blue">
+
+                <div class="card-label">
+                    HIGH-SPEED VEHICLES
+                </div>
+
+                <div
+                    class="card-value"
+                    id="highSpeed">
+                    0
+                </div>
+
+                <div class="card-status">
+                    ABOVE 85 KM/H
+                </div>
+
+            </div>
+
+
+            <div class="card red">
+
+                <div class="card-label">
+                    ACTIVE WARNINGS
+                </div>
+
+                <div
+                    class="card-value"
+                    id="warnings">
+                    0
+                </div>
+
+                <div class="card-status"
+                     style="color:#ff7789;">
+                    DRIVER ALERTS
+                </div>
+
+            </div>
+
+
+            <div class="card green">
+
+                <div class="card-label">
+                    SYSTEM STATUS
+                </div>
+
+                <div class="card-value"
+                     style="font-size:22px;">
+                    ONLINE
+                </div>
+
+                <div class="card-status">
+                    ALL SYSTEMS READY
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
+
+        <section class="content-grid">
+
+
+            <!-- MONITOR PREVIEW -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>
+                        LIVE MONITORING
+                    </h3>
+
+                    <span>
+                        ● READY
+                    </span>
+
+                </div>
+
+
+                <div class="monitor-preview">
+
+
+                    <div class="preview-ring ring1"></div>
+
+                    <div class="preview-ring ring2"></div>
+
+                    <div class="preview-ring ring3"></div>
+
+
+                    <div class="preview-vehicle v1"></div>
+
+                    <div class="preview-vehicle v2"></div>
+
+
+                    <div class="preview-core"></div>
+
+
+                    <div class="preview-info">
+
+                        RANGE:
+                        <strong>500 M</strong>
+
+                        <br>
+
+                        SPEED FILTER:
+                        <strong>&gt; 85 KM/H</strong>
+
+                        <br>
+
+                        REAR MONITOR:
+                        <strong>ACTIVE</strong>
+
+                    </div>
+
+                </div>
+
+
+                <a href="/monitoring">
+
+                    <button
+                        class="monitor-button">
+                        OPEN LIVE MONITORING
+                    </button>
+
+                </a>
+
+            </div>
+
+
+
+            <!-- QUICK STATUS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>
+                        SYSTEM STATUS
+                    </h3>
+
+                    <span>
+                        ONLINE
+                    </span>
+
+                </div>
+
+
+                <div class="status-row">
+
+                    <span>
+                        Sensor System
+                    </span>
+
+                    <span>
+                        ONLINE
+                    </span>
+
+                </div>
+
+
+                <div class="status-row">
+
+                    <span>
+                        Rear Monitoring
+                    </span>
+
+                    <span>
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+                <div class="status-row">
+
+                    <span>
+                        Speed Threshold
+                    </span>
+
+                    <span>
+                        85 KM/H
+                    </span>
+
+                </div>
+
+
+                <div class="status-row">
+
+                    <span>
+                        Monitoring Range
+                    </span>
+
+                    <span>
+                        500 M
+                    </span>
+
+                </div>
+
+
+                <div class="status-row">
+
+                    <span>
+                        Driver Alert
+                    </span>
+
+                    <span>
+                        READY
+                    </span>
+
+                </div>
+
+
+                <div class="alert-box">
+
+                    <strong>
+                        ✓ SYSTEM READY
+                    </strong>
+
+                    <p>
+                        The monitoring system is ready
+                        to observe approaching traffic and
+                        identify rapid rear approaches.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     DEMO DASHBOARD COUNTERS
+========================================================== -->
+
+<script>
+
+    /*
+ <script>
+
+/* =========================================================
+   HYPER-SPEED DASHBOARD DATA
+========================================================= */
+
+function getAppStats() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem("hyperSpeedStats") ||
+            '{"vehicles":0,"highSpeed":0,"warnings":0,"passes":0}'
+        );
+
+    } catch (error) {
+
+        return {
+            vehicles: 0,
+            highSpeed: 0,
+            warnings: 0,
+            passes: 0
+        };
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE DASHBOARD
+========================================================= */
+
+function updateDashboard() {
+
+    const stats =
+        getAppStats();
+
+
+    document.getElementById(
+        "vehiclesDetected"
+    ).textContent =
+        stats.vehicles;
+
+
+    document.getElementById(
+        "highSpeed"
+    ).textContent =
+        stats.highSpeed;
+
+
+    document.getElementById(
+        "warnings"
+    ).textContent =
+        stats.warnings;
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+updateDashboard();
+
+
+/* =========================================================
+   CHECK FOR NEW MONITORING DATA
+========================================================= */
+
+setInterval(
+    updateDashboard,
+    1000
+);
+
+</script>
+</body>
+</html>

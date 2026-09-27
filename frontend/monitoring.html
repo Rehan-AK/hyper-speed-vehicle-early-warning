@@ -1,0 +1,3008 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hyper-Speed | Vehicle Monitor</title>
+
+    <style>
+        :root {
+            --bg: #050d17;
+            --bg-2: #071321;
+            --panel: #0a1727;
+            --panel-2: #0d1d31;
+
+            --blue: #1c78c9;
+            --blue-bright: #37a9ff;
+            --blue-soft: rgba(55,169,255,.16);
+
+            --green: #36d399;
+            --green-soft: rgba(54,211,153,.14);
+
+            --red: #ff526b;
+            --red-soft: rgba(255,82,107,.15);
+
+            --text: #eaf4ff;
+            --muted: #8094ab;
+
+            --line: rgba(100,160,210,.16);
+            --white-line: rgba(255,255,255,.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            background:
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(28,120,201,.12),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 82% 80%,
+                    rgba(54,211,153,.06),
+                    transparent 24%
+                ),
+                linear-gradient(
+                    160deg,
+                    #040a12 0%,
+                    #071321 48%,
+                    #081827 100%
+                );
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            overflow-x: hidden;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .page {
+            min-height: 100vh;
+            padding: 18px;
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+
+            padding: 18px 22px;
+            margin-bottom: 18px;
+
+            border: 1px solid rgba(55,169,255,.22);
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(10,26,43,.97),
+                    rgba(6,17,29,.97)
+                );
+
+            box-shadow:
+                0 20px 45px rgba(0,0,0,.30),
+                inset 0 0 25px rgba(55,169,255,.035);
+        }
+
+        .brand h1 {
+            font-size: 24px;
+            letter-spacing: 4px;
+        }
+
+        .brand p {
+            margin-top: 6px;
+
+            color: #7e9ab4;
+
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        .online {
+            color: var(--green);
+
+            font-size: 10px;
+            letter-spacing: 1.5px;
+
+            white-space: nowrap;
+        }
+
+        .dot {
+            display: inline-block;
+
+            width: 8px;
+            height: 8px;
+
+            margin-right: 7px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            box-shadow:
+                0 0 13px rgba(54,211,153,.75);
+        }
+
+        /* =========================================================
+           MAIN LAYOUT
+        ========================================================= */
+
+        .layout {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                350px;
+
+            gap: 18px;
+        }
+
+        /* =========================================================
+           PANELS
+        ========================================================= */
+
+        .panel {
+            border: 1px solid rgba(55,169,255,.17);
+            border-radius: 17px;
+
+            background:
+                rgba(7,18,31,.96);
+
+            overflow: hidden;
+
+            box-shadow:
+                0 18px 50px rgba(0,0,0,.28),
+                inset 0 0 28px rgba(55,169,255,.018);
+        }
+
+        /* =========================================================
+           PANEL HEADER
+        ========================================================= */
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 16px 20px;
+
+            border-bottom:
+                1px solid var(--white-line);
+        }
+
+        .panel-header h2 {
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .panel-mode {
+            color: var(--green);
+
+            font-size: 9px;
+            letter-spacing: 1.4px;
+        }
+
+        /* =========================================================
+           SENSOR AREA
+        ========================================================= */
+
+        .sensor {
+            position: relative;
+
+            height: 690px;
+
+            overflow: hidden;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    rgba(55,169,255,.09),
+                    transparent 27%
+                ),
+                linear-gradient(
+                    rgba(255,255,255,.014) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.014) 1px,
+                    transparent 1px
+                ),
+                #050d17;
+
+            background-size:
+                auto,
+                42px 42px,
+                42px 42px,
+                auto;
+        }
+
+        .sensor::after {
+            content: "";
+
+            position: absolute;
+
+            inset: 9% 8%;
+
+            border:
+                1px solid rgba(55,169,255,.08);
+
+            border-radius: 43%;
+
+            pointer-events: none;
+        }
+
+        /* =========================================================
+           CROSS LINES
+        ========================================================= */
+
+        .cross-horizontal,
+        .cross-vertical {
+            position: absolute;
+
+            background:
+                rgba(55,169,255,.09);
+
+            z-index: 2;
+        }
+
+        .cross-horizontal {
+            left: 7%;
+            right: 7%;
+            top: 50%;
+
+            height: 1px;
+        }
+
+        .cross-vertical {
+            top: 8%;
+            bottom: 8%;
+            left: 50%;
+
+            width: 1px;
+        }
+
+        /* =========================================================
+           SENSOR SECTORS
+        ========================================================= */
+
+        .sector {
+            position: absolute;
+
+            inset: 8%;
+
+            border-radius: 50%;
+
+            pointer-events: none;
+
+            z-index: 1;
+        }
+
+        .sector::before {
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            border-radius: 50%;
+
+            background:
+                conic-gradient(
+                    from 0deg,
+
+                    rgba(55,169,255,.13)
+                        0deg 70deg,
+
+                    transparent
+                        70deg 110deg,
+
+                    rgba(54,211,153,.09)
+                        110deg 180deg,
+
+                    transparent
+                        180deg 250deg,
+
+                    rgba(55,169,255,.13)
+                        250deg 290deg,
+
+                    transparent
+                        290deg 360deg
+                );
+
+            mask:
+                radial-gradient(
+                    circle,
+                    transparent 0 59%,
+                    #000 60% 100%
+                );
+
+            -webkit-mask:
+                radial-gradient(
+                    circle,
+                    transparent 0 59%,
+                    #000 60% 100%
+                );
+        }
+
+        /* =========================================================
+           RINGS
+        ========================================================= */
+
+        .ring {
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            transform:
+                translate(-50%, -50%);
+
+            border-radius: 50%;
+
+            border:
+                1px solid rgba(55,169,255,.13);
+
+            z-index: 3;
+        }
+
+        .r1 {
+            width: 145px;
+            height: 145px;
+        }
+
+        .r2 {
+            width: 280px;
+            height: 280px;
+        }
+
+        .r3 {
+            width: 430px;
+            height: 430px;
+
+            border-color:
+                rgba(54,211,153,.09);
+        }
+
+        .r4 {
+            width: 575px;
+            height: 575px;
+
+            border-color:
+                rgba(255,255,255,.06);
+        }
+
+        /* =========================================================
+           SCAN
+        ========================================================= */
+
+        .scan {
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            width: 46%;
+            height: 46%;
+
+            transform-origin:
+                0 100%;
+
+            background:
+                linear-gradient(
+                    40deg,
+                    transparent 0%,
+                    rgba(55,169,255,.025) 30%,
+                    rgba(55,169,255,.19) 100%
+                );
+
+            clip-path:
+                polygon(
+                    0 100%,
+                    100% 0,
+                    100% 100%
+                );
+
+            animation:
+                scanRotation 3.8s linear infinite;
+
+            z-index: 4;
+
+            pointer-events: none;
+        }
+
+        @keyframes scanRotation {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =========================================================
+           SENSOR INFORMATION
+        ========================================================= */
+
+        .sensor-info {
+            position: absolute;
+
+            left: 18px;
+            top: 17px;
+
+            z-index: 20;
+
+            padding: 10px 12px;
+
+            border:
+                1px solid rgba(55,169,255,.18);
+
+            border-radius: 8px;
+
+            background:
+                rgba(5,13,23,.90);
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+            line-height: 1.8;
+        }
+
+        .sensor-info strong {
+            color: var(--green);
+        }
+
+        /* =========================================================
+           DIRECTION LABELS
+        ========================================================= */
+
+        .direction {
+            position: absolute;
+
+            z-index: 15;
+
+            color:
+                rgba(197,220,242,.55);
+
+            font-size: 8px;
+
+            letter-spacing: 2.2px;
+        }
+
+        .front {
+            left: 50%;
+            top: 24px;
+
+            transform:
+                translateX(-50%);
+        }
+
+        .rear {
+            left: 50%;
+            bottom: 24px;
+
+            transform:
+                translateX(-50%);
+
+            color:
+                rgba(54,211,153,.78);
+        }
+
+        .left {
+            left: 20px;
+            top: 50%;
+
+            transform:
+                translateY(-50%)
+                rotate(-90deg);
+        }
+
+        .right {
+            right: 20px;
+            top: 50%;
+
+            transform:
+                translateY(-50%)
+                rotate(90deg);
+        }
+
+        /* =========================================================
+           CENTRAL SYSTEM
+        ========================================================= */
+
+        .our-system {
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            transform:
+                translate(-50%, -50%);
+
+            width: 118px;
+            height: 125px;
+
+            z-index: 40;
+
+            text-align: center;
+        }
+
+        .ship-glow {
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            width: 120px;
+            height: 120px;
+
+            transform:
+                translate(-50%, -50%);
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(54,211,153,.10),
+                    transparent 68%
+                );
+
+            animation:
+                systemPulse 2.7s ease-in-out infinite;
+        }
+
+        @keyframes systemPulse {
+            0%,
+            100% {
+                opacity: .55;
+
+                transform:
+                    translate(-50%, -50%)
+                    scale(.93);
+            }
+
+            50% {
+                opacity: 1;
+
+                transform:
+                    translate(-50%, -50%)
+                    scale(1.06);
+            }
+        }
+
+        .ship {
+            position: absolute;
+
+            left: 50%;
+            top: 48%;
+
+            transform:
+                translate(-50%, -50%);
+
+            width: 57px;
+            height: 70px;
+
+            clip-path:
+                polygon(
+                    50% 0%,
+                    79% 24%,
+                    92% 70%,
+                    65% 100%,
+                    35% 100%,
+                    8% 70%,
+                    21% 24%
+                );
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #4cb8ff 0%,
+                    #1d5c95 52%,
+                    #09233c 100%
+                );
+
+            box-shadow:
+                0 0 25px rgba(55,169,255,.20),
+                inset 0 0 18px rgba(255,255,255,.06);
+        }
+
+        .ship::before {
+            content: "";
+
+            position: absolute;
+
+            left: 50%;
+            top: 18px;
+
+            width: 14px;
+            height: 14px;
+
+            transform:
+                translateX(-50%)
+                rotate(45deg);
+
+            border:
+                1px solid #7ed0ff;
+
+            box-shadow:
+                0 0 12px rgba(55,169,255,.70);
+        }
+
+        .ship::after {
+            content: "";
+
+            position: absolute;
+
+            left: 50%;
+            bottom: 15px;
+
+            width: 28px;
+            height: 3px;
+
+            transform:
+                translateX(-50%);
+
+            border-radius: 10px;
+
+            background:
+                var(--green);
+
+            box-shadow:
+                0 0 12px rgba(54,211,153,.80);
+        }
+
+        .ship-label {
+            position: absolute;
+
+            left: 0;
+            right: 0;
+
+            bottom: -9px;
+
+            color: var(--green);
+
+            font-size: 8px;
+
+            letter-spacing: 2px;
+        }
+
+        /* =========================================================
+           TRAFFIC OBJECT
+        ========================================================= */
+
+        .object {
+            position: absolute;
+
+            width: 18px;
+            height: 18px;
+
+            transform:
+                translate(-50%, -50%)
+                rotate(45deg);
+
+            border:
+                1px solid rgba(126,188,230,.55);
+
+            border-radius: 4px;
+
+            background:
+                rgba(55,169,255,.08);
+
+            z-index: 25;
+
+            box-shadow:
+                0 0 13px rgba(55,169,255,.12);
+
+            transition:
+                left .08s linear,
+                top .08s linear,
+                opacity .2s linear,
+                width .2s,
+                height .2s;
+        }
+
+        .object::after {
+            content: "";
+
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            width: 6px;
+            height: 6px;
+
+            transform:
+                translate(-50%, -50%);
+
+            border-radius: 50%;
+
+            background:
+                var(--blue-bright);
+
+            box-shadow:
+                0 0 8px rgba(55,169,255,.8);
+        }
+
+        .object.normal {
+            border-color:
+                rgba(54,211,153,.60);
+
+            background:
+                rgba(54,211,153,.06);
+
+            box-shadow:
+                0 0 13px rgba(54,211,153,.13);
+        }
+
+        .object.normal::after {
+            background:
+                var(--green);
+
+            box-shadow:
+                0 0 9px rgba(54,211,153,.85);
+        }
+
+        .object.threat {
+            width: 25px;
+            height: 25px;
+
+            border-color:
+                var(--red);
+
+            background:
+                rgba(255,82,107,.09);
+
+            box-shadow:
+                0 0 22px rgba(255,82,107,.42);
+        }
+
+        .object.threat::after {
+            width: 8px;
+            height: 8px;
+
+            background:
+                var(--red);
+
+            box-shadow:
+                0 0 12px rgba(255,82,107,.95);
+        }
+
+        .object-label {
+            position: absolute;
+
+            left: 15px;
+            top: -7px;
+
+            min-width: 98px;
+
+            padding: 5px 7px;
+
+            border-left:
+                2px solid rgba(55,169,255,.50);
+
+            background:
+                rgba(4,11,19,.88);
+
+            transform:
+                rotate(-45deg);
+
+            transform-origin:
+                left center;
+
+            color: #b5c9dd;
+
+            font-size: 8px;
+
+            letter-spacing: .8px;
+
+            white-space: nowrap;
+
+            pointer-events: none;
+        }
+
+        .object.normal .object-label {
+            border-left-color:
+                var(--green);
+
+            color:
+                #aeeed4;
+        }
+
+        .object.threat .object-label {
+            border-left-color:
+                var(--red);
+
+            color:
+                #ff8898;
+        }
+
+        .object-label strong {
+            display: block;
+
+            font-size: 10px;
+        }
+
+        .object-label small {
+            display: block;
+
+            margin-top: 2px;
+
+            color: #7891a9;
+
+            font-size: 7px;
+        }
+
+        /* =========================================================
+           DRIVER WARNING
+        ========================================================= */
+
+        .warning {
+            position: absolute;
+
+            top: 18px;
+            left: 50%;
+
+            transform:
+                translate(-50%, -15px);
+
+            z-index: 80;
+
+            padding: 11px 18px;
+
+            border:
+                1px solid rgba(255,82,107,.66);
+
+            border-radius: 9px;
+
+            background:
+                rgba(53,7,17,.94);
+
+            color: #ff8495;
+
+            font-size: 9px;
+            font-weight: 700;
+
+            letter-spacing: 1.8px;
+
+            opacity: 0;
+
+            white-space: nowrap;
+
+            transition: .25s;
+        }
+
+        .warning.show {
+            opacity: 1;
+
+            transform:
+                translate(-50%, 0);
+
+            animation:
+                warningFlash .7s infinite alternate;
+        }
+
+        @keyframes warningFlash {
+            from {
+                box-shadow:
+                    0 0 8px rgba(255,82,107,.15);
+            }
+
+            to {
+                box-shadow:
+                    0 0 28px rgba(255,82,107,.42);
+            }
+        }
+
+        /* =========================================================
+           SIDE PANEL
+        ========================================================= */
+
+        .side {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section {
+            padding: 18px;
+
+            border-bottom:
+                1px solid var(--white-line);
+        }
+
+        .section h3 {
+            margin-bottom: 14px;
+
+            color: #9eb4ca;
+
+            font-size: 10px;
+
+            letter-spacing: 1.7px;
+        }
+
+        /* =========================================================
+           THREAT CARD
+        ========================================================= */
+
+        .threat-card {
+            padding: 16px;
+
+            border:
+                1px solid rgba(55,169,255,.18);
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(12,31,50,.78),
+                    rgba(7,16,27,.78)
+                );
+        }
+
+        .threat-card.active {
+            border-color:
+                rgba(255,82,107,.65);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(54,9,20,.82),
+                    rgba(18,8,15,.82)
+                );
+        }
+
+        .threat-title {
+            color:
+                var(--green);
+
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .threat-card.active .threat-title {
+            color:
+                #ff7789;
+        }
+
+        .threat-speed {
+            margin-top: 12px;
+
+            color:
+                var(--blue-bright);
+
+            font-size: 29px;
+            font-weight: 700;
+        }
+
+        .threat-card.active .threat-speed {
+            color:
+                #ff7789;
+        }
+
+        /* =========================================================
+           METRICS
+        ========================================================= */
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            padding: 8px 0;
+
+            color:
+                #748ba1;
+
+            font-size: 10px;
+        }
+
+        .metric strong {
+            color:
+                #e4f0fb;
+        }
+
+        /* =========================================================
+           DIRECTION STATUS
+        ========================================================= */
+
+        .direction-status {
+            display: inline-block;
+
+            padding: 5px 8px;
+
+            border:
+                1px solid rgba(54,211,153,.24);
+
+            border-radius: 6px;
+
+            color:
+                var(--green);
+
+            font-size: 8px;
+
+            letter-spacing: 1px;
+        }
+
+        .direction-status.danger {
+            border-color:
+                rgba(255,82,107,.50);
+
+            color:
+                #ff7081;
+        }
+
+        /* =========================================================
+           STATS
+        ========================================================= */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 9px;
+        }
+
+        .stat {
+            padding: 11px;
+
+            border:
+                1px solid rgba(255,255,255,.065);
+
+            border-radius: 9px;
+
+            background:
+                rgba(255,255,255,.018);
+        }
+
+        .stat span {
+            display: block;
+
+            color:
+                #71869b;
+
+            font-size: 8px;
+
+            letter-spacing: 1px;
+        }
+
+        .stat strong {
+            display: block;
+
+            margin-top: 7px;
+
+            color:
+                #e9f3fb;
+
+            font-size: 17px;
+        }
+
+        /* =========================================================
+           NEXT EVENT
+        ========================================================= */
+
+        .next-event {
+            margin-top: 10px;
+
+            padding: 10px;
+
+            border:
+                1px solid rgba(55,169,255,.13);
+
+            border-radius: 8px;
+
+            background:
+                rgba(55,169,255,.035);
+
+            text-align: center;
+        }
+
+        .next-event span {
+            display: block;
+
+            color:
+                #71869b;
+
+            font-size: 8px;
+
+            letter-spacing: 1.2px;
+        }
+
+        .next-event strong {
+            display: block;
+
+            margin-top: 5px;
+
+            color:
+                var(--blue-bright);
+
+            font-size: 17px;
+        }
+
+        /* =========================================================
+           CONTROLS
+        ========================================================= */
+
+        .controls {
+            margin-top: auto;
+
+            padding: 18px;
+        }
+
+        .start {
+            width: 100%;
+
+            padding: 14px;
+
+            border:
+                1px solid rgba(55,169,255,.38);
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #12568e,
+                    #0a3152
+                );
+
+            color:
+                #dff2ff;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            letter-spacing: 1.5px;
+
+            cursor: pointer;
+        }
+
+        .start:hover {
+            filter:
+                brightness(1.13);
+        }
+
+        .status {
+            margin-top: 10px;
+
+            padding: 11px;
+
+            border:
+                1px solid rgba(54,211,153,.20);
+
+            border-radius: 9px;
+
+            background:
+                rgba(8,31,25,.72);
+
+            color:
+                var(--green);
+
+            text-align: center;
+
+            font-size: 8px;
+
+            letter-spacing: 1px;
+        }
+
+        .note {
+            margin-top: 11px;
+
+            color:
+                #617589;
+
+            font-size: 8px;
+
+            line-height: 1.55;
+
+            text-align: center;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 950px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sensor {
+                height: 610px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page {
+                padding: 10px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .sensor {
+                height: 540px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <header class="header">
+
+    <div class="brand">
+        <h1>HYPER-SPEED</h1>
+
+        <p>
+            ADVANCED PROXIMITY • RELATIVE MOTION • DRIVER WARNING
+        </p>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:18px;">
+
+        <a
+            href="/dashboard"
+            style="
+                text-decoration:none;
+                padding:10px 15px;
+                border:1px solid rgba(55,169,255,.35);
+                border-radius:8px;
+                color:#dff2ff;
+                background:rgba(55,169,255,.08);
+                font-size:9px;
+                font-weight:700;
+                letter-spacing:1.2px;
+            "
+        >
+            DASHBOARD
+        </a>
+
+        <div class="online">
+            <span class="dot"></span>
+            SENSOR SYSTEM ONLINE
+        </div>
+
+    </div>
+
+</header>
+
+
+    <div class="layout">
+
+
+        <!-- =====================================================
+             SENSOR MONITOR
+        ====================================================== -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    360° THREAT MONITOR
+                </h2>
+
+                <span class="panel-mode">
+                    REAR-FIRST MONITORING
+                </span>
+
+            </div>
+
+
+            <div
+                id="sensor"
+                class="sensor"
+            >
+
+                <div class="sensor-info">
+
+                    RANGE:
+                    <strong>500 M</strong>
+
+                    <br>
+
+                    SPEED FILTER:
+                    <strong>&gt; 85 KM/H</strong>
+
+                    <br>
+
+                    MOTION:
+                    <strong>RELATIVE</strong>
+
+                </div>
+
+
+                <div class="direction front">
+                    FRONT
+                </div>
+
+                <div class="direction rear">
+                    REAR • PRIORITY
+                </div>
+
+                <div class="direction left">
+                    LEFT
+                </div>
+
+                <div class="direction right">
+                    RIGHT
+                </div>
+
+
+                <div class="cross-horizontal"></div>
+
+                <div class="cross-vertical"></div>
+
+                <div class="sector"></div>
+
+
+                <div class="ring r4"></div>
+
+                <div class="ring r3"></div>
+
+                <div class="ring r2"></div>
+
+                <div class="ring r1"></div>
+
+
+                <div class="scan"></div>
+
+
+                <div
+                    id="warning"
+                    class="warning"
+                >
+                    ⚠ RAPID REAR APPROACH — DRIVER ALERT
+                </div>
+
+
+                <div class="our-system">
+
+                    <div class="ship-glow"></div>
+
+                    <div class="ship"></div>
+
+                    <div class="ship-label">
+                        OUR VEHICLE
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             SIDE PANEL
+        ====================================================== -->
+
+        <aside class="panel side">
+
+
+            <!-- ACTIVE THREAT -->
+
+            <div class="section">
+
+                <h3>
+                    ACTIVE THREAT
+                </h3>
+
+
+                <div
+                    id="threatCard"
+                    class="threat-card"
+                >
+
+                    <div
+                        id="threatTitle"
+                        class="threat-title"
+                    >
+                        SENSOR CLEAR
+                    </div>
+
+
+                    <div
+                        id="threatSpeed"
+                        class="threat-speed"
+                    >
+                        --
+                    </div>
+
+
+                    <div class="metric">
+
+                        <span>
+                            Our speed
+                        </span>
+
+                        <strong>
+                            60 km/h
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <span>
+                            Target speed
+                        </span>
+
+                        <strong id="targetSpeed">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <span>
+                            Relative speed
+                        </span>
+
+                        <strong id="relativeSpeed">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <span>
+                            Distance
+                        </span>
+
+                        <strong id="distance">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <span>
+                            ETA
+                        </span>
+
+                        <strong id="eta">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <span>
+                            Direction
+                        </span>
+
+                        <strong>
+
+                            <span
+                                id="direction"
+                                class="direction-status"
+                            >
+                                --
+                            </span>
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TRAFFIC ACTIVITY -->
+
+            <div class="section">
+
+                <h3>
+                    TRAFFIC ACTIVITY
+                </h3>
+
+
+                <div class="stats">
+
+                    <div class="stat">
+
+                        <span>
+                            EVENTS
+                        </span>
+
+                        <strong id="events">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <span>
+                            THREATS
+                        </span>
+
+                        <strong id="threats">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <span>
+                            FILTERED
+                        </span>
+
+                        <strong id="filtered">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <span>
+                            PASS EVENTS
+                        </span>
+
+                        <strong id="passes">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="next-event">
+
+                    <span>
+                        NEXT TRAFFIC EVENT
+                    </span>
+
+                    <strong id="nextEvent">
+                        READY
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- DECISION LOGIC -->
+
+            <div class="section">
+
+                <h3>
+                    DECISION LOGIC
+                </h3>
+
+
+                <div class="metric">
+
+                    <span>
+                        Speed above 85
+                    </span>
+
+                    <strong>
+                        REQUIRED
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        Closing distance
+                    </span>
+
+                    <strong>
+                        REQUIRED
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        Rear direction
+                    </span>
+
+                    <strong>
+                        PRIORITY
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        Normal traffic
+                    </span>
+
+                    <strong>
+                        FILTERED
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        Passing traffic
+                    </span>
+
+                    <strong>
+                        ALLOWED
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTROLS -->
+
+            <div class="controls">
+
+                <button
+                    id="start"
+                    class="start"
+                    onclick="toggleMonitoring()"
+                >
+                    START MONITORING
+                </button>
+
+
+                <div
+                    id="status"
+                    class="status"
+                >
+                    READY FOR SENSOR INPUT
+                </div>
+
+
+                <div class="note">
+
+                    One traffic event appears at a time.
+
+                    Vehicles approach from the rear or
+                    rear-side, pass around our vehicle,
+                    and continue ahead.
+
+                    A driver warning is shown only when
+                    the simulated vehicle is above 85 km/h
+                    and is closing on our position.
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==========================================================
+   SYSTEM SETTINGS
+========================================================== */
+
+const OUR_SPEED = 60;
+const THRESHOLD = 85;
+
+
+/* ==========================================================
+   DASHBOARD SHARED DATA
+========================================================== */
+
+function getAppStats() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem("hyperSpeedStats") ||
+            '{"vehicles":0,"highSpeed":0,"warnings":0,"passes":0}'
+        );
+
+    } catch (error) {
+
+        return {
+            vehicles: 0,
+            highSpeed: 0,
+            warnings: 0,
+            passes: 0
+        };
+
+    }
+}
+
+
+function saveAppStats(stats) {
+
+    localStorage.setItem(
+        "hyperSpeedStats",
+        JSON.stringify(stats)
+    );
+
+}
+
+
+function recordVehicleDetected(v) {
+
+    const stats =
+        getAppStats();
+
+    stats.vehicles++;
+
+    if (v.speed > THRESHOLD) {
+        stats.highSpeed++;
+    }
+
+    saveAppStats(stats);
+
+}
+
+
+function recordWarning() {
+
+    const stats =
+        getAppStats();
+
+    stats.warnings++;
+
+    saveAppStats(stats);
+
+}
+
+
+function recordPass() {
+
+    const stats =
+        getAppStats();
+
+    stats.passes++;
+
+    saveAppStats(stats);
+
+}
+
+function saveHistoryEvent(v, result, distance) {
+
+    let history = [];
+
+    try {
+        history = JSON.parse(
+            localStorage.getItem("hyperSpeedHistory") || "[]"
+        );
+    } catch (error) {
+        history = [];
+    }
+
+    history.push({
+        id: v.id,
+        speed: v.speed,
+        direction: v.direction,
+        distance: Number(distance).toFixed(1),
+        result: result,
+        time: new Date().toLocaleTimeString()
+    });
+
+    if (history.length > 100) {
+        history = history.slice(-100);
+    }
+
+    localStorage.setItem(
+        "hyperSpeedHistory",
+        JSON.stringify(history)
+    );
+}
+
+/* ==========================================================
+   MONITOR STATE
+========================================================== */
+
+let monitoring = false;
+
+let animationFrame = null;
+
+let previousTime = null;
+
+
+/* ==========================================================
+   CURRENT VEHICLE
+========================================================== */
+
+let vehicle = null;
+
+
+/* ==========================================================
+   TIMERS
+========================================================== */
+
+let nextSpawnTimer = null;
+
+let countdownTimer = null;
+
+
+/* ==========================================================
+   LOCAL MONITOR STATISTICS
+========================================================== */
+
+let eventCount = 0;
+
+let threatCount = 0;
+
+let filteredCount = 0;
+
+let passCount = 0;
+
+
+/* ==========================================================
+   DOM ELEMENTS
+========================================================== */
+
+const sensor =
+    document.getElementById("sensor");
+
+const warningEl =
+    document.getElementById("warning");
+
+const threatCard =
+    document.getElementById("threatCard");
+
+const threatTitle =
+    document.getElementById("threatTitle");
+
+const threatSpeed =
+    document.getElementById("threatSpeed");
+
+const targetSpeed =
+    document.getElementById("targetSpeed");
+
+const relativeSpeed =
+    document.getElementById("relativeSpeed");
+
+const distanceEl =
+    document.getElementById("distance");
+
+const etaEl =
+    document.getElementById("eta");
+
+const directionEl =
+    document.getElementById("direction");
+
+const eventsEl =
+    document.getElementById("events");
+
+const threatsEl =
+    document.getElementById("threats");
+
+const filteredEl =
+    document.getElementById("filtered");
+
+const passesEl =
+    document.getElementById("passes");
+
+const nextEventEl =
+    document.getElementById("nextEvent");
+
+const statusEl =
+    document.getElementById("status");
+
+const startBtn =
+    document.getElementById("start");
+
+
+/* ==========================================================
+   CREATE VEHICLE
+========================================================== */
+
+function createVehicle() {
+
+    const isFast =
+        Math.random() < 0.80;
+
+
+    const speed =
+        isFast
+            ? 90 +
+              Math.floor(
+                  Math.random() * 55
+              )
+            : 55 +
+              Math.floor(
+                  Math.random() * 30
+              );
+
+
+    const directions = [
+        "REAR",
+        "LEFT REAR",
+        "RIGHT REAR"
+    ];
+
+
+    const direction =
+        directions[
+            Math.floor(
+                Math.random() *
+                directions.length
+            )
+        ];
+
+
+    const passSide =
+        Math.random() < 0.5
+            ? "LEFT"
+            : "RIGHT";
+
+
+    return {
+
+        id:
+            "V-" +
+            Math.floor(
+                1000 +
+                Math.random() *
+                9000
+            ),
+
+        speed,
+
+        direction,
+
+        passSide,
+
+        progress: 0,
+
+        duration:
+            5.2 +
+            Math.random() * 2.6,
+
+        threat:
+            isFast,
+
+        alerted: false,
+
+        passed: false
+
+    };
+
+}
+
+
+/* ==========================================================
+   CREATE VISUAL VEHICLE
+========================================================== */
+
+function createVehicleElement(v) {
+
+    const el =
+        document.createElement("div");
+
+
+    el.className =
+        "object";
+
+
+    el.innerHTML = `
+
+        <div class="object-label">
+
+            <strong>
+                ${v.speed} KM/H
+            </strong>
+
+            <small>
+                ${v.id}
+            </small>
+
+        </div>
+
+    `;
+
+
+    sensor.appendChild(el);
+
+
+    return el;
+
+}
+
+
+/* ==========================================================
+   GET VEHICLE POSITION
+========================================================== */
+
+function getPosition(v) {
+
+    const p =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                v.progress
+            )
+        );
+
+
+    /* REAR */
+
+    if (
+        v.direction === "REAR"
+    ) {
+
+        if (p < 0.48) {
+
+            const q =
+                p / 0.48;
+
+
+            return {
+
+                x:
+                    v.passSide === "LEFT"
+                        ? 39 - 2 * q
+                        : 61 + 2 * q,
+
+                y:
+                    86 - 34 * q
+
+            };
+
+        }
+
+
+        const q =
+            (p - 0.48) / 0.52;
+
+
+        return {
+
+            x:
+                v.passSide === "LEFT"
+                    ? 37 - 20 * q
+                    : 63 + 20 * q,
+
+            y:
+                52 - 34 * q
+
+        };
+
+    }
+
+
+    /* LEFT REAR */
+
+    if (
+        v.direction === "LEFT REAR"
+    ) {
+
+        if (p < 0.45) {
+
+            const q =
+                p / 0.45;
+
+
+            return {
+
+                x:
+                    16 +
+                    26 * q,
+
+                y:
+                    77 -
+                    24 * q
+
+            };
+
+        }
+
+
+        const q =
+            (p - 0.45) / 0.55;
+
+
+        return {
+
+            x:
+                42 -
+                10 * q,
+
+            y:
+                53 -
+                38 * q
+
+        };
+
+    }
+
+
+    /* RIGHT REAR */
+
+    if (
+        v.direction === "RIGHT REAR"
+    ) {
+
+        if (p < 0.45) {
+
+            const q =
+                p / 0.45;
+
+
+            return {
+
+                x:
+                    84 -
+                    27 * q,
+
+                y:
+                    77 -
+                    24 * q
+
+            };
+
+        }
+
+
+        const q =
+            (p - 0.45) / 0.55;
+
+
+        return {
+
+            x:
+                58 +
+                10 * q,
+
+            y:
+                53 -
+                38 * q
+
+        };
+
+    }
+
+
+    return {
+        x: 50,
+        y: 50
+    };
+
+}
+
+
+/* ==========================================================
+   DISTANCE
+========================================================== */
+
+function getDistance(v) {
+
+    if (
+        v.progress < 0.45
+    ) {
+
+        return (
+
+            235 -
+
+            190 *
+
+            (
+                v.progress /
+                0.45
+            )
+
+        );
+
+    }
+
+
+    return (
+
+        45 +
+
+        260 *
+
+        (
+
+            (
+                v.progress -
+                0.45
+            ) /
+            0.55
+
+        )
+
+    );
+
+}
+
+
+/* ==========================================================
+   IS VEHICLE CLOSING
+========================================================== */
+
+function isClosing(v) {
+
+    const rearDirection =
+        v.direction === "REAR" ||
+        v.direction === "LEFT REAR" ||
+        v.direction === "RIGHT REAR";
+
+
+    return (
+
+        rearDirection &&
+
+        v.progress > 0.04 &&
+
+        v.progress < 0.45
+
+    );
+
+}
+
+
+/* ==========================================================
+   SHOW VEHICLE
+========================================================== */
+
+function showVehicle(v) {
+
+    if (!v.el) {
+        return;
+    }
+
+
+    const position =
+        getPosition(v);
+
+
+    v.el.style.left =
+        position.x + "%";
+
+
+    v.el.style.top =
+        position.y + "%";
+
+
+    if (
+        v.speed <= THRESHOLD
+    ) {
+
+        v.el.classList.add(
+            "normal"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   SHOW THREAT
+========================================================== */
+
+function showThreat(v) {
+
+    if (!v.alerted) {
+
+        v.alerted = true;
+
+        threatCount++;
+
+        recordWarning();
+
+    }
+
+
+    const position =
+        getPosition(v);
+
+
+    v.el.classList.remove(
+        "normal"
+    );
+
+
+    v.el.classList.add(
+        "threat"
+    );
+
+
+    v.el.style.left =
+        position.x + "%";
+
+
+    v.el.style.top =
+        position.y + "%";
+
+
+    warningEl.classList.add(
+        "show"
+    );
+
+
+    threatCard.classList.add(
+        "active"
+    );
+
+
+    directionEl.classList.add(
+        "danger"
+    );
+
+
+    threatTitle.textContent =
+        "⚠ " +
+        v.direction +
+        " APPROACH";
+
+
+    threatSpeed.textContent =
+        v.speed +
+        " km/h";
+
+
+    targetSpeed.textContent =
+        v.speed +
+        " km/h";
+
+
+    const relative =
+        Math.max(
+            0,
+            v.speed -
+            OUR_SPEED
+        );
+
+
+    relativeSpeed.textContent =
+        relative.toFixed(0) +
+        " km/h";
+
+
+    const distance =
+        Math.max(
+            5,
+            getDistance(v)
+        );
+
+
+    distanceEl.textContent =
+        distance.toFixed(1) +
+        " m";
+
+
+    const closingMetersPerSecond =
+        relative / 3.6;
+
+
+    const eta =
+        closingMetersPerSecond > 0
+            ? distance /
+              closingMetersPerSecond
+            : 0;
+
+
+    etaEl.textContent =
+        eta.toFixed(1) +
+        " sec";
+
+
+    directionEl.textContent =
+        v.direction;
+
+
+    statusEl.textContent =
+        "DRIVER ALERT — FAST VEHICLE CLOSING";
+
+
+    updateStats();
+
+}
+
+
+/* ==========================================================
+   CLEAR THREAT
+========================================================== */
+
+function clearThreat() {
+
+    warningEl.classList.remove(
+        "show"
+    );
+
+
+    threatCard.classList.remove(
+        "active"
+    );
+
+
+    directionEl.classList.remove(
+        "danger"
+    );
+
+
+    threatTitle.textContent =
+        "SENSOR CLEAR";
+
+
+    threatSpeed.textContent =
+        "--";
+
+
+    targetSpeed.textContent =
+        "--";
+
+
+    relativeSpeed.textContent =
+        "--";
+
+
+    distanceEl.textContent =
+        "--";
+
+
+    etaEl.textContent =
+        "--";
+
+
+    directionEl.textContent =
+        "--";
+
+}
+
+
+/* ==========================================================
+   UPDATE MONITOR STATISTICS
+========================================================== */
+
+function updateStats() {
+
+    eventsEl.textContent =
+        eventCount;
+
+
+    threatsEl.textContent =
+        threatCount;
+
+
+    filteredEl.textContent =
+        filteredCount;
+
+
+    passesEl.textContent =
+        passCount;
+
+}
+
+
+/* ==========================================================
+   SCHEDULE NEXT EVENT
+========================================================== */
+
+function scheduleNextEvent() {
+
+    if (!monitoring) {
+        return;
+    }
+
+
+    const gapSeconds =
+        5 +
+        Math.random() * 5;
+
+
+    let remaining =
+        Math.ceil(
+            gapSeconds
+        );
+
+
+    nextEventEl.textContent =
+        remaining + "s";
+
+
+    clearInterval(
+        countdownTimer
+    );
+
+
+    countdownTimer =
+        setInterval(
+            function () {
+
+                if (!monitoring) {
+
+                    clearInterval(
+                        countdownTimer
+                    );
+
+                    return;
+
+                }
+
+
+                remaining--;
+
+
+                if (
+                    remaining <= 0
+                ) {
+
+                    clearInterval(
+                        countdownTimer
+                    );
+
+
+                    nextEventEl.textContent =
+                        "DETECTED";
+
+
+                    spawnVehicle();
+
+                }
+                else {
+
+                    nextEventEl.textContent =
+                        remaining + "s";
+
+                }
+
+            },
+
+            1000
+        );
+
+}
+
+
+/* ==========================================================
+   SPAWN VEHICLE
+========================================================== */
+
+function spawnVehicle() {
+
+    if (!monitoring) {
+        return;
+    }
+
+
+    vehicle =
+        createVehicle();
+
+
+    /* SEND VEHICLE TO DASHBOARD */
+
+    recordVehicleDetected(
+        vehicle
+    );
+
+
+    vehicle.el =
+        createVehicleElement(
+            vehicle
+        );
+
+
+    eventCount++;
+
+
+    statusEl.textContent =
+        "TRAFFIC DETECTED — ANALYZING";
+
+
+    nextEventEl.textContent =
+        "ACTIVE";
+
+
+    updateStats();
+
+}
+
+
+/* ==========================================================
+   FINISH VEHICLE
+========================================================== */
+
+function finishVehicle() {
+
+    if (!vehicle) {
+        return;
+    }
+
+
+    passCount++;
+
+    saveHistoryEvent(
+    vehicle,
+    vehicle.alerted ? "WARNING" : "FILTERED",
+    getDistance(vehicle)
+);
+
+
+    /* SEND PASS TO DASHBOARD */
+
+    recordPass();
+
+
+    if (!vehicle.alerted) {
+
+        filteredCount++;
+
+    }
+
+
+    if (vehicle.el) {
+
+        vehicle.el.remove();
+
+    }
+
+
+    vehicle = null;
+
+
+    clearThreat();
+
+
+    statusEl.textContent =
+        "TRAFFIC CLEARED — NO ACTIVE THREAT";
+
+
+    updateStats();
+
+
+    scheduleNextEvent();
+
+}
+
+
+/* ==========================================================
+   MOVE VEHICLE
+========================================================== */
+
+function moveVehicle(dt) {
+
+    if (!vehicle) {
+        return;
+    }
+
+
+    vehicle.progress +=
+        dt /
+        vehicle.duration;
+
+
+    if (
+        vehicle.progress >= 1
+    ) {
+
+        finishVehicle();
+
+        return;
+
+    }
+
+
+    showVehicle(
+        vehicle
+    );
+
+
+    const fast =
+        vehicle.speed >
+        THRESHOLD;
+
+
+    const closing =
+        isClosing(
+            vehicle
+        );
+
+
+    /* MAIN WARNING RULE */
+
+    if (
+        fast &&
+        closing
+    ) {
+
+        showThreat(
+            vehicle
+        );
+
+    }
+    else {
+
+        if (
+            vehicle.el &&
+            vehicle.el.classList.contains(
+                "threat"
+            )
+        ) {
+
+            vehicle.el.classList.remove(
+                "threat"
+            );
+
+
+            vehicle.el.classList.add(
+                "normal"
+            );
+
+        }
+
+
+        if (
+            !fast ||
+            !closing
+        ) {
+
+            statusEl.textContent =
+                "MONITORING TRAFFIC — NO ACTIVE THREAT";
+
+        }
+
+
+        clearThreat();
+
+
+        if (
+            vehicle.progress >= 0.45 &&
+            vehicle.progress < 0.76
+        ) {
+
+            statusEl.textContent =
+                "VEHICLE PASSING — NO WARNING";
+
+        }
+
+    }
+
+
+    updateStats();
+
+}
+
+
+/* ==========================================================
+   MAIN ANIMATION LOOP
+========================================================== */
+
+function loop(time) {
+
+    if (!monitoring) {
+        return;
+    }
+
+
+    if (
+        previousTime === null
+    ) {
+
+        previousTime =
+            time;
+
+    }
+
+
+    const dt =
+        Math.min(
+
+            (
+                time -
+                previousTime
+            ) / 1000,
+
+            0.05
+
+        );
+
+
+    previousTime =
+        time;
+
+
+    moveVehicle(
+        dt
+    );
+
+
+    animationFrame =
+        requestAnimationFrame(
+            loop
+        );
+
+}
+
+
+/* ==========================================================
+   START / STOP MONITORING
+========================================================== */
+
+function toggleMonitoring() {
+
+    monitoring =
+        !monitoring;
+
+
+    if (monitoring) {
+
+        startBtn.textContent =
+            "STOP MONITORING";
+
+
+        statusEl.textContent =
+            "MONITORING ACTIVE — WAITING FOR TRAFFIC";
+
+
+        eventCount = 0;
+
+        threatCount = 0;
+
+        filteredCount = 0;
+
+        passCount = 0;
+
+
+        vehicle = null;
+
+
+        updateStats();
+
+
+        nextEventEl.textContent =
+            "2s";
+
+
+        nextSpawnTimer =
+            setTimeout(
+
+                function () {
+
+                    if (monitoring) {
+
+                        spawnVehicle();
+
+                    }
+
+                },
+
+                2000
+
+            );
+
+
+        previousTime =
+            null;
+
+
+        animationFrame =
+            requestAnimationFrame(
+                loop
+            );
+
+    }
+
+    else {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+
+        clearTimeout(
+            nextSpawnTimer
+        );
+
+
+        clearInterval(
+            countdownTimer
+        );
+
+
+        if (
+            vehicle &&
+            vehicle.el
+        ) {
+
+            vehicle.el.remove();
+
+        }
+
+
+        vehicle = null;
+
+
+        startBtn.textContent =
+            "START MONITORING";
+
+
+        statusEl.textContent =
+            "MONITORING PAUSED";
+
+
+        nextEventEl.textContent =
+            "PAUSED";
+
+
+        clearThreat();
+
+    }
+
+}
+
+
+/* ==========================================================
+   INITIAL STATE
+========================================================== */
+
+updateStats();
+
+clearThreat();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hyper-Speed | Event History</title>
+
+    <style>
+        :root {
+            --bg: #050d17;
+            --panel: #0a1727;
+            --panel-2: #0d1d31;
+
+            --blue: #37a9ff;
+            --green: #36d399;
+            --red: #ff526b;
+
+            --text: #eaf4ff;
+            --muted: #8094ab;
+            --line: rgba(100,160,210,.16);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 15% 10%,
+                    rgba(28,120,201,.12),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    160deg,
+                    #040a12,
+                    #071321,
+                    #081827
+                );
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 18px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 20px 24px;
+            margin-bottom: 18px;
+
+            border: 1px solid rgba(55,169,255,.22);
+            border-radius: 15px;
+
+            background:
+                rgba(7,18,31,.95);
+
+            box-shadow:
+                0 18px 45px rgba(0,0,0,.30);
+        }
+
+        .brand h1 {
+            font-size: 24px;
+            letter-spacing: 4px;
+        }
+
+        .brand p {
+            margin-top: 6px;
+
+            color: #7e9ab4;
+
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        .online {
+            color: var(--green);
+
+            font-size: 9px;
+            letter-spacing: 1.5px;
+        }
+
+        .dot {
+            display: inline-block;
+
+            width: 8px;
+            height: 8px;
+
+            margin-right: 6px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            box-shadow:
+                0 0 12px rgba(54,211,153,.8);
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+
+            margin-bottom: 18px;
+
+            padding: 12px;
+
+            border:
+                1px solid rgba(55,169,255,.15);
+
+            border-radius: 12px;
+
+            background:
+                rgba(7,18,31,.90);
+        }
+
+        .nav a {
+            text-decoration: none;
+
+            padding: 10px 14px;
+
+            border-radius: 8px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+            letter-spacing: 1px;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: #eaf4ff;
+
+            background:
+                rgba(55,169,255,.10);
+
+            border:
+                1px solid rgba(55,169,255,.20);
+        }
+
+        .panel {
+            border:
+                1px solid rgba(55,169,255,.17);
+
+            border-radius: 15px;
+
+            background:
+                rgba(7,18,31,.96);
+
+            overflow: hidden;
+
+            box-shadow:
+                0 18px 50px rgba(0,0,0,.28);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 18px 20px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
+        }
+
+        .panel-header h2 {
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .panel-header span {
+            color: var(--green);
+
+            font-size: 8px;
+            letter-spacing: 1.5px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 14px 16px;
+
+            color: #7f98af;
+
+            text-align: left;
+
+            font-size: 8px;
+
+            letter-spacing: 1.3px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
+        }
+
+        td {
+            padding: 15px 16px;
+
+            color: #d9e8f6;
+
+            font-size: 9px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.045);
+        }
+
+        tr:hover td {
+            background:
+                rgba(55,169,255,.025);
+        }
+
+        .speed {
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #ff7789;
+        }
+
+        .filtered {
+            color: var(--green);
+        }
+
+        .empty {
+            text-align: center;
+
+            padding: 60px 20px;
+
+            color: var(--muted);
+
+            font-size: 11px;
+        }
+
+        .clear-btn {
+            padding: 9px 13px;
+
+            border:
+                1px solid rgba(255,82,107,.25);
+
+            border-radius: 8px;
+
+            background:
+                rgba(255,82,107,.06);
+
+            color: #ff8998;
+
+            font-size: 8px;
+
+            font-weight: 700;
+
+            letter-spacing: 1px;
+
+            cursor: pointer;
+        }
+
+        .clear-btn:hover {
+            background:
+                rgba(255,82,107,.12);
+        }
+
+        @media (max-width: 700px) {
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .nav {
+                flex-wrap: wrap;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <header class="header">
+
+        <div class="brand">
+
+            <h1>HYPER-SPEED</h1>
+
+            <p>
+                VEHICLE EVENT HISTORY • DRIVER WARNING RECORD
+            </p>
+
+        </div>
+
+        <div class="online">
+
+            <span class="dot"></span>
+
+            SYSTEM ONLINE
+
+        </div>
+
+    </header>
+
+
+    <nav class="nav">
+
+        <a href="/dashboard">
+            DASHBOARD
+        </a>
+
+        <a href="/monitoring">
+            LIVE MONITORING
+        </a>
+
+        <a
+            href="/history"
+            class="active"
+        >
+            EVENT HISTORY
+        </a>
+
+        <a href="/settings">
+            SETTINGS
+        </a>
+
+        <a href="/">
+            LOGOUT
+        </a>
+
+    </nav>
+
+
+    <section class="panel">
+
+        <div class="panel-header">
+
+            <h2>
+                VEHICLE EVENT HISTORY
+            </h2>
+
+            <div>
+
+                <span
+                    id="eventCount"
+                    style="margin-right:12px;"
+                >
+                    0 EVENTS
+                </span>
+
+                <button
+                    class="clear-btn"
+                    onclick="clearHistory()"
+                >
+                    CLEAR HISTORY
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            VEHICLE ID
+                        </th>
+
+                        <th>
+                            SPEED
+                        </th>
+
+                        <th>
+                            DIRECTION
+                        </th>
+
+                        <th>
+                            DISTANCE
+                        </th>
+
+                        <th>
+                            RESULT
+                        </th>
+
+                        <th>
+                            TIME
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="historyBody">
+
+                </tbody>
+
+            </table>
+
+
+            <div
+                id="emptyState"
+                class="empty"
+            >
+
+                NO VEHICLE EVENTS RECORDED YET
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+/* ==========================================================
+   EVENT HISTORY
+========================================================== */
+
+function getHistory() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem(
+                "hyperSpeedHistory"
+            ) || "[]"
+        );
+
+    } catch (error) {
+
+        return [];
+
+    }
+
+}
+
+
+function saveHistory(history) {
+
+    localStorage.setItem(
+        "hyperSpeedHistory",
+        JSON.stringify(history)
+    );
+
+}
+
+
+function renderHistory() {
+
+    const history =
+        getHistory();
+
+    const body =
+        document.getElementById(
+            "historyBody"
+        );
+
+    const empty =
+        document.getElementById(
+            "emptyState"
+        );
+
+    const counter =
+        document.getElementById(
+            "eventCount"
+        );
+
+
+    body.innerHTML = "";
+
+
+    counter.textContent =
+        history.length +
+        (history.length === 1
+            ? " EVENT"
+            : " EVENTS");
+
+
+    if (history.length === 0) {
+
+        empty.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    empty.style.display =
+        "none";
+
+
+    history
+        .slice()
+        .reverse()
+        .forEach(function(event) {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const resultClass =
+                event.result === "WARNING"
+                    ? "warning"
+                    : "filtered";
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${event.id}
+                </td>
+
+                <td class="speed">
+                    ${event.speed} km/h
+                </td>
+
+                <td>
+                    ${event.direction}
+                </td>
+
+                <td>
+                    ${event.distance} m
+                </td>
+
+                <td class="${resultClass}">
+                    ${event.result}
+                </td>
+
+                <td>
+                    ${event.time}
+                </td>
+
+            `;
+
+
+            body.appendChild(row);
+
+        });
+
+}
+
+
+/* ==========================================================
+   CLEAR HISTORY
+========================================================== */
+
+function clearHistory() {
+
+    localStorage.removeItem(
+        "hyperSpeedHistory"
+    );
+
+    renderHistory();
+
+}
+
+
+/* ==========================================================
+   INITIALIZE
+========================================================== */
+
+renderHistory();
+
+
+/*
+   Refresh automatically so new
+   monitoring events appear here.
+*/
+
+setInterval(
+    renderHistory,
+    1000
+);
+
+</script>
+
+</body>
+</html>

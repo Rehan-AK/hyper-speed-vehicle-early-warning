@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Hyper-Speed | Alert Center</title>
+
+    <style>
+
+        :root {
+            --bg: #050d17;
+            --panel: #0a1727;
+            --panel-2: #0d1d31;
+
+            --blue: #37a9ff;
+            --green: #36d399;
+            --red: #ff526b;
+
+            --text: #eaf4ff;
+            --muted: #8094ab;
+
+            --line: rgba(100,160,210,.16);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 15% 10%,
+                    rgba(28,120,201,.12),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 85% 85%,
+                    rgba(54,211,153,.05),
+                    transparent 25%
+                ),
+                linear-gradient(
+                    160deg,
+                    #040a12,
+                    #071321,
+                    #081827
+                );
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 18px;
+        }
+
+        /* HEADER */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 20px 24px;
+            margin-bottom: 18px;
+
+            border:
+                1px solid rgba(55,169,255,.22);
+
+            border-radius: 15px;
+
+            background:
+                rgba(7,18,31,.95);
+
+            box-shadow:
+                0 18px 45px rgba(0,0,0,.30);
+        }
+
+        .brand h1 {
+            font-size: 24px;
+            letter-spacing: 4px;
+        }
+
+        .brand p {
+            margin-top: 6px;
+
+            color: #7e9ab4;
+
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        .online {
+            color: var(--green);
+
+            font-size: 9px;
+
+            letter-spacing: 1.5px;
+        }
+
+        .dot {
+            display: inline-block;
+
+            width: 8px;
+            height: 8px;
+
+            margin-right: 6px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            box-shadow:
+                0 0 12px rgba(54,211,153,.8);
+        }
+
+        /* NAVIGATION */
+
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+            margin-bottom: 18px;
+
+            padding: 12px;
+
+            border:
+                1px solid rgba(55,169,255,.15);
+
+            border-radius: 12px;
+
+            background:
+                rgba(7,18,31,.90);
+        }
+
+        .nav a {
+            text-decoration: none;
+
+            padding: 10px 14px;
+
+            border-radius: 8px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+
+            letter-spacing: 1px;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: #eaf4ff;
+
+            background:
+                rgba(55,169,255,.10);
+
+            border:
+                1px solid rgba(55,169,255,.20);
+        }
+
+        /* MAIN */
+
+        .panel {
+            border:
+                1px solid rgba(55,169,255,.17);
+
+            border-radius: 15px;
+
+            background:
+                rgba(7,18,31,.96);
+
+            overflow: hidden;
+
+            box-shadow:
+                0 18px 50px rgba(0,0,0,.28);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+
+            padding: 18px 20px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
+        }
+
+        .panel-header h2 {
+            font-size: 12px;
+
+            letter-spacing: 2px;
+        }
+
+        .panel-header span {
+            color: var(--red);
+
+            font-size: 8px;
+
+            letter-spacing: 1.5px;
+        }
+
+        /* ALERT CONTAINER */
+
+        .alerts {
+            padding: 20px;
+        }
+
+        .empty {
+            padding: 70px 20px;
+
+            text-align: center;
+
+            color: var(--muted);
+
+            font-size: 11px;
+
+            letter-spacing: 1px;
+        }
+
+        /* ALERT CARD */
+
+        .alert-card {
+            position: relative;
+
+            display: grid;
+
+            grid-template-columns:
+                52px
+                1fr
+                auto;
+
+            align-items: center;
+
+            gap: 16px;
+
+            padding: 16px;
+
+            margin-bottom: 12px;
+
+            border:
+                1px solid rgba(255,82,107,.22);
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(44,12,22,.78),
+                    rgba(10,18,29,.90)
+                );
+
+            box-shadow:
+                inset 0 0 25px rgba(255,82,107,.025);
+        }
+
+        .alert-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 52px;
+            height: 52px;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255,82,107,.10);
+
+            border:
+                1px solid rgba(255,82,107,.30);
+
+            color: var(--red);
+
+            font-size: 22px;
+
+            box-shadow:
+                0 0 18px rgba(255,82,107,.10);
+        }
+
+        .alert-main h3 {
+            color: #ff7a8c;
+
+            font-size: 12px;
+
+            letter-spacing: 1px;
+        }
+
+        .alert-main p {
+            margin-top: 6px;
+
+            color: #91a6bb;
+
+            font-size: 9px;
+
+            line-height: 1.6;
+        }
+
+        .alert-meta {
+            display: flex;
+            flex-direction: column;
+
+            align-items: flex-end;
+
+            gap: 6px;
+        }
+
+        .alert-speed {
+            color: #ff8998;
+
+            font-size: 18px;
+
+            font-weight: 700;
+        }
+
+        .alert-time {
+            color: #687e93;
+
+            font-size: 8px;
+
+            letter-spacing: 1px;
+        }
+
+        .clear-btn {
+            padding: 9px 13px;
+
+            border:
+                1px solid rgba(255,82,107,.25);
+
+            border-radius: 8px;
+
+            background:
+                rgba(255,82,107,.06);
+
+            color: #ff8998;
+
+            font-size: 8px;
+
+            font-weight: 700;
+
+            letter-spacing: 1px;
+
+            cursor: pointer;
+        }
+
+        .clear-btn:hover {
+            background:
+                rgba(255,82,107,.12);
+        }
+
+        @media (max-width: 700px) {
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+
+                gap: 12px;
+            }
+
+            .alert-card {
+                grid-template-columns: 45px 1fr;
+            }
+
+            .alert-meta {
+                grid-column: 2;
+
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="page">
+
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="brand">
+
+            <h1>
+                HYPER-SPEED
+            </h1>
+
+            <p>
+                DRIVER WARNING • RAPID VEHICLE APPROACH
+            </p>
+
+        </div>
+
+
+        <div class="online">
+
+            <span class="dot"></span>
+
+            ALERT SYSTEM ONLINE
+
+        </div>
+
+    </header>
+
+
+    <!-- NAVIGATION -->
+
+    <nav class="nav">
+
+        <a href="/dashboard">
+            DASHBOARD
+        </a>
+
+        <a href="/monitoring">
+            LIVE MONITORING
+        </a>
+
+        <a href="/alerts" class="active">
+            ALERT CENTER
+        </a>
+
+        <a href="/history">
+            EVENT HISTORY
+        </a>
+
+        <a href="/settings">
+            SETTINGS
+        </a>
+
+        <a href="/">
+            LOGOUT
+        </a>
+
+    </nav>
+
+
+    <!-- ALERT PANEL -->
+
+    <section class="panel">
+
+
+        <div class="panel-header">
+
+            <h2>
+                DRIVER ALERT CENTER
+            </h2>
+
+            <div>
+
+                <span id="alertCount"
+                      style="margin-right:14px;">
+                    0 ALERTS
+                </span>
+
+                <button
+                    class="clear-btn"
+                    onclick="clearAlerts()">
+                    CLEAR ALERTS
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="alerts"
+            class="alerts">
+
+        </div>
+
+
+        <div
+            id="empty"
+            class="empty">
+
+            NO ACTIVE DRIVER ALERTS
+
+        </div>
+
+
+    </section>
+
+</div>
+
+
+<script>
+
+/* ==========================================================
+   ALERT CENTER
+========================================================== */
+
+function getAlerts() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem(
+                "hyperSpeedAlerts"
+            ) || "[]"
+        );
+
+    } catch (error) {
+
+        return [];
+
+    }
+
+}
+
+
+/* ==========================================================
+   SAVE ALERT
+========================================================== */
+
+function saveAlert(alert) {
+
+    let alerts =
+        getAlerts();
+
+    alerts.push(alert);
+
+    if (alerts.length > 50) {
+
+        alerts =
+            alerts.slice(-50);
+
+    }
+
+    localStorage.setItem(
+        "hyperSpeedAlerts",
+        JSON.stringify(alerts)
+    );
+
+}
+
+
+/* ==========================================================
+   RENDER ALERTS
+========================================================== */
+
+function renderAlerts() {
+
+    const alerts =
+        getAlerts();
+
+    const container =
+        document.getElementById(
+            "alerts"
+        );
+
+    const empty =
+        document.getElementById(
+            "empty"
+        );
+
+    const count =
+        document.getElementById(
+            "alertCount"
+        );
+
+
+    container.innerHTML = "";
+
+
+    count.textContent =
+        alerts.length +
+        (alerts.length === 1
+            ? " ALERT"
+            : " ALERTS");
+
+
+    if (alerts.length === 0) {
+
+        empty.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    empty.style.display =
+        "none";
+
+
+    alerts
+        .slice()
+        .reverse()
+        .forEach(function(alert) {
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "alert-card";
+
+
+            card.innerHTML = `
+
+                <div class="alert-icon">
+                    ⚠
+                </div>
+
+
+                <div class="alert-main">
+
+                    <h3>
+                        ${alert.direction}
+                        APPROACH DETECTED
+                    </h3>
+
+                    <p>
+                        Vehicle ${alert.id}
+                        is closing on our position.
+                        Driver warning threshold exceeded.
+                    </p>
+
+                </div>
+
+
+                <div class="alert-meta">
+
+                    <div class="alert-speed">
+                        ${alert.speed} km/h
+                    </div>
+
+                    <div class="alert-time">
+                        ${alert.time}
+                    </div>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        });
+
+}
+
+
+/* ==========================================================
+   CLEAR ALERTS
+========================================================== */
+
+function clearAlerts() {
+
+    localStorage.removeItem(
+        "hyperSpeedAlerts"
+    );
+
+    renderAlerts();
+
+}
+
+
+/* ==========================================================
+   INITIALIZE
+========================================================== */
+
+renderAlerts();
+
+
+setInterval(
+    renderAlerts,
+    1000
+);
+
+</script>
+
+
+</body>
+</html>

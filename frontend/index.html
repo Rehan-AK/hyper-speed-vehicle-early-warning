@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hyper-Speed | Secure Access</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Password field with show/hide button */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrapper input {
+            width: 100%;
+            padding-right: 48px;
+            box-sizing: border-box;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 18px;
+            opacity: 0.75;
+        }
+
+        .toggle-password:hover {
+            opacity: 1;
+        }
+
+        .forgot-password {
+            display: block;
+            margin-top: 10px;
+            text-align: right;
+            color: #35d49a;
+            text-decoration: none;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .reset-box {
+            display: none;
+            margin-top: 18px;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(53, 212, 154, 0.25);
+            background: rgba(10, 15, 13, 0.8);
+        }
+
+        .reset-box h3 {
+            margin-bottom: 10px;
+            color: #e7bd67;
+            font-size: 14px;
+        }
+
+        .reset-box p {
+            font-size: 11px;
+            line-height: 1.5;
+            color: #aaa;
+            margin-bottom: 12px;
+        }
+
+        .reset-box button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #35d49a;
+            color: #07110c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <div class="background-glow glow-one"></div>
+        <div class="background-glow glow-two"></div>
+
+        <section class="login-card">
+
+            <div class="security-icon">
+                🛡️
+            </div>
+
+            <p class="system-label">
+                ADVANCED VEHICLE MONITORING
+            </p>
+
+            <h1>HYPER-SPEED</h1>
+
+            <h2>EARLY WARNING SYSTEM</h2>
+
+            <div class="divider"></div>
+
+            <p class="access-title">
+                SECURE ACCESS
+            </p>
+
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm">
+
+                <!-- USERNAME -->
+                <div class="input-group">
+
+                    <label for="username">
+                        USERNAME
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="Enter username"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PASSWORD -->
+                <div class="input-group">
+
+                    <label for="password">
+                        PASSWORD
+                    </label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            id="togglePassword"
+                            title="Show password">
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FORGOT PASSWORD -->
+                <a
+                    href="#"
+                    class="forgot-password"
+                    id="forgotPassword">
+                    Forgot Password?
+                </a>
+
+
+                <!-- LOGIN BUTTON -->
+                <button
+                    type="submit"
+                    class="login-button">
+
+                    <span>SECURE LOGIN</span>
+
+                    <span class="arrow">
+                        →
+                    </span>
+
+                </button>
+
+
+                <p
+                    id="loginMessage"
+                    class="login-message">
+                </p>
+
+            </form>
+
+
+            <!-- RESET PASSWORD BOX -->
+            <div
+                class="reset-box"
+                id="resetBox">
+
+                <h3>
+                    PASSWORD RECOVERY
+                </h3>
+
+                <p>
+                    This is a local college-project login.
+                    Your demo credentials can be reset here.
+                </p>
+
+                <button
+                    type="button"
+                    id="resetButton">
+                    RESET TO NEW LOGIN
+                </button>
+
+            </div>
+
+
+            <!-- SYSTEM STATUS -->
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                <span>
+                    SYSTEM SECURE
+                </span>
+
+            </div>
+
+
+            <p class="footer-text">
+                AUTHORIZED PERSONNEL ONLY
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        /* =====================================
+           NEW LOGIN CREDENTIALS
+        ===================================== */
+
+        const VALID_USERNAME = "rehan";
+        const VALID_PASSWORD = "Rehan@123";
+
+
+        /* =====================================
+           ELEMENTS
+        ===================================== */
+
+        const loginForm =
+            document.getElementById("loginForm");
+
+        const usernameInput =
+            document.getElementById("username");
+
+        const passwordInput =
+            document.getElementById("password");
+
+        const loginMessage =
+            document.getElementById("loginMessage");
+
+        const togglePassword =
+            document.getElementById("togglePassword");
+
+        const forgotPassword =
+            document.getElementById("forgotPassword");
+
+        const resetBox =
+            document.getElementById("resetBox");
+
+        const resetButton =
+            document.getElementById("resetButton");
+
+
+        /* =====================================
+           SHOW / HIDE PASSWORD
+        ===================================== */
+
+        togglePassword.addEventListener(
+            "click",
+            function () {
+
+                if (passwordInput.type === "password") {
+
+                    passwordInput.type = "text";
+
+                    togglePassword.textContent = "🙈";
+
+                    togglePassword.title =
+                        "Hide password";
+
+                } else {
+
+                    passwordInput.type = "password";
+
+                    togglePassword.textContent = "👁";
+
+                    togglePassword.title =
+                        "Show password";
+                }
+
+            }
+        );
+
+
+        /* =====================================
+           LOGIN
+        ===================================== */
+
+        loginForm.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+                const username =
+                    usernameInput.value.trim();
+
+                const password =
+                    passwordInput.value;
+
+
+                if (
+                    username === VALID_USERNAME &&
+                    password === VALID_PASSWORD
+                ) {
+
+                    loginMessage.textContent =
+                        "ACCESS GRANTED";
+
+                    loginMessage.style.color =
+                        "#35d49a";
+
+
+                    /* Open dashboard */
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "/dashboard";
+
+                        },
+                        500
+                    );
+
+                } else {
+
+                    loginMessage.textContent =
+                        "INVALID USERNAME OR PASSWORD";
+
+                    loginMessage.style.color =
+                        "#ff526b";
+                }
+
+            }
+        );
+
+
+        /* =====================================
+           FORGOT PASSWORD
+        ===================================== */
+
+        forgotPassword.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                resetBox.style.display =
+                    "block";
+
+            }
+        );
+
+
+        /* =====================================
+           RESET
+        ===================================== */
+
+        resetButton.addEventListener(
+            "click",
+            function () {
+
+                usernameInput.value =
+                    VALID_USERNAME;
+
+                passwordInput.value =
+                    VALID_PASSWORD;
+
+                passwordInput.type =
+                    "text";
+
+                togglePassword.textContent =
+                    "🙈";
+
+                loginMessage.textContent =
+                    "NEW LOGIN READY";
+
+                loginMessage.style.color =
+                    "#35d49a";
+
+                resetBox.style.display =
+                    "none";
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
