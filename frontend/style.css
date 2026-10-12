@@ -739,3 +739,129 @@ body {
         transform: rotate(360deg);
     }
 }
+/* =========================================================
+   ALIEN-TECH SATELLITE FILTER
+========================================================= */
+
+.leaflet-tile-pane .satellite-layer {
+    filter:
+        brightness(0.62)
+        contrast(1.25)
+        saturate(0.65)
+        hue-rotate(4deg);
+}
+
+
+/* ROAD NETWORK */
+
+.leaflet-tile-pane .road-layer {
+    filter:
+        brightness(1.55)
+        contrast(1.35)
+        saturate(2.4)
+        hue-rotate(65deg);
+}
+
+
+/* =========================================================
+   FUTURISTIC HUD OVERLAY
+========================================================= */
+
+#map::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 500;
+
+    background:
+
+        /* subtle cyan grid */
+        linear-gradient(
+            rgba(0,255,220,.035) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(0,255,220,.035) 1px,
+            transparent 1px
+        ),
+
+        /* center tactical glow */
+        radial-gradient(
+            circle at 50% 50%,
+            transparent 0%,
+            rgba(0,20,25,.05) 45%,
+            rgba(0,5,10,.28) 100%
+        );
+
+    background-size:
+        80px 80px,
+        80px 80px,
+        100% 100%;
+}
+
+
+/* =========================================================
+   SCAN LINE
+========================================================= */
+
+#map::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    height: 2px;
+
+    top: 0;
+
+    z-index: 501;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(0,255,220,.45),
+            transparent
+        );
+
+    box-shadow:
+        0 0 15px rgba(0,255,220,.4);
+
+    animation:
+        satelliteScan 5s linear infinite;
+}
+
+@keyframes satelliteScan {
+
+    0% {
+        top: 0%;
+        opacity: 0;
+    }
+
+    10% {
+        opacity: .7;
+    }
+
+    90% {
+        opacity: .7;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
+
+}

@@ -35,7 +35,6 @@ loginForm.addEventListener("submit", function (event) {
 
 function showMessage(message, success) {
     loginMessage.textContent = message;
-
     if (success) {
         loginMessage.style.color = "#20e070";
     } else {

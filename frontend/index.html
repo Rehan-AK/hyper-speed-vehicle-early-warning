@@ -1,167 +1,1022 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Hyper-Speed | Secure Access</title>
-
-    <link rel="stylesheet" href="style.css">
+    <title>Hyper-Speed | Early Warning System</title>
 
     <style>
-        /* Password field with show/hide button */
-        .password-wrapper {
-            position: relative;
-            width: 100%;
+        :root {
+            --bg: #07100d;
+            --bg-soft: #0c1713;
+            --panel: rgba(15, 28, 23, 0.88);
+            --panel-strong: #10211a;
+            --line: rgba(126, 255, 205, 0.14);
+            --text: #f3f7f5;
+            --muted: #9aa9a2;
+            --green: #35d49a;
+            --green-bright: #68f2b9;
+            --gold: #e7bd67;
+            --red: #ff526b;
+            --shadow: 0 30px 80px rgba(0, 0, 0, 0.38);
         }
 
-        .password-wrapper input {
-            width: 100%;
-            padding-right: 48px;
+        * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .toggle-password {
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+                "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 15% 12%, rgba(53, 212, 154, 0.08), transparent 28%),
+                radial-gradient(circle at 86% 24%, rgba(231, 189, 103, 0.06), transparent 24%),
+                linear-gradient(135deg, #040806 0%, #07100d 48%, #091611 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body.hs-lock {
+            overflow: hidden;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .hs-page {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .hs-noise,
+        .hs-grid {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .hs-grid {
+            opacity: 0.16;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: linear-gradient(to bottom, black, transparent 92%);
+        }
+
+        .hs-glow {
+            position: fixed;
+            width: 480px;
+            height: 480px;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            opacity: 0.12;
+        }
+
+        .hs-glow.one {
+            background: var(--green);
+            top: -250px;
+            left: -160px;
+        }
+
+        .hs-glow.two {
+            background: var(--gold);
+            right: -210px;
+            top: 280px;
+        }
+
+        .hs-container {
+            width: min(1160px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        /* NAVIGATION */
+        .hs-nav {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 0;
+        }
+
+        .hs-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hs-brand-mark {
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(53, 212, 154, 0.45);
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: rgba(53, 212, 154, 0.08);
+            box-shadow: inset 0 0 24px rgba(53, 212, 154, 0.06);
+            font-size: 20px;
+        }
+
+        .hs-brand strong {
+            display: block;
+            letter-spacing: 0.14em;
+            font-size: 13px;
+        }
+
+        .hs-brand span {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: 0.16em;
+            margin-top: 3px;
+        }
+
+        .hs-nav-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .hs-nav-link,
+        .hs-nav-button {
+            border: 1px solid var(--line);
+            background: rgba(10, 20, 16, 0.56);
+            color: #dfe9e4;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 12px;
+            letter-spacing: 0.06em;
+            transition: 0.2s ease;
+        }
+
+        .hs-nav-link:hover,
+        .hs-nav-button:hover {
+            border-color: rgba(53, 212, 154, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .hs-nav-button {
+            color: #07110c;
+            border-color: transparent;
+            background: var(--green);
+            font-weight: 800;
+        }
+
+        /* HERO */
+        .hs-hero {
+            min-height: calc(100vh - 92px);
+            display: grid;
+            grid-template-columns: 1.08fr 0.92fr;
+            gap: 56px;
+            align-items: center;
+            padding: 46px 0 92px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hs-kicker {
+            color: var(--green-bright);
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .hs-hero h1 {
+            font-size: clamp(44px, 7vw, 78px);
+            line-height: 0.94;
+            letter-spacing: -0.045em;
+            max-width: 720px;
+        }
+
+        .hs-hero h1 span {
+            color: var(--green-bright);
+        }
+
+        .hs-hero-copy {
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.75;
+            max-width: 650px;
+            margin-top: 24px;
+        }
+
+        .hs-hero-actions {
+            display: flex;
+            gap: 13px;
+            flex-wrap: wrap;
+            margin-top: 32px;
+        }
+
+        .hs-primary,
+        .hs-secondary {
+            border-radius: 12px;
+            padding: 14px 20px;
+            cursor: pointer;
+            border: 1px solid var(--line);
+            transition: 0.2s ease;
+            font-weight: 800;
+        }
+
+        .hs-primary {
+            background: var(--green);
+            color: #07110c;
+            border-color: transparent;
+        }
+
+        .hs-secondary {
+            background: rgba(10, 20, 16, 0.56);
+            color: var(--text);
+        }
+
+        .hs-primary:hover,
+        .hs-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        .hs-live-note {
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #879991;
+            font-size: 11px;
+            letter-spacing: 0.06em;
+        }
+
+        .hs-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 14px rgba(53, 212, 154, 0.9);
+        }
+
+        /* VISUAL PREVIEW */
+        .hs-visual {
+            position: relative;
+            min-height: 460px;
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            background:
+                linear-gradient(145deg, rgba(22, 40, 32, 0.84), rgba(7, 15, 12, 0.96));
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .hs-visual::before {
+            content: "";
             position: absolute;
-            right: 12px;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(53, 212, 154, 0.045), transparent 28%),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0,
+                    transparent 47px,
+                    rgba(255,255,255,0.025) 48px
+                );
+            pointer-events: none;
+        }
+
+        .hs-monitor-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--line);
+            font-size: 10px;
+            letter-spacing: 0.15em;
+        }
+
+        .hs-monitor-top span:last-child {
+            color: var(--green-bright);
+        }
+
+        .hs-road {
+            position: absolute;
+            left: 13%;
+            right: 13%;
+            top: 21%;
+            bottom: 10%;
+            transform: perspective(480px) rotateX(55deg);
+            background:
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0,
+                    transparent 26%,
+                    rgba(255,255,255,0.42) 26%,
+                    rgba(255,255,255,0.42) 27%,
+                    transparent 27%,
+                    transparent 53%
+                ),
+                linear-gradient(90deg, #1b2521, #313a35 50%, #1b2521);
+            border-left: 1px solid rgba(255,255,255,0.12);
+            border-right: 1px solid rgba(255,255,255,0.12);
+            opacity: 0.7;
+        }
+
+        .hs-road::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent, rgba(53, 212, 154, 0.12));
+        }
+
+        .hs-scan-line {
+            position: absolute;
+            left: 12%;
+            right: 12%;
+            height: 1px;
+            top: 48%;
+            background: var(--green);
+            box-shadow: 0 0 18px rgba(53, 212, 154, 0.85);
+            animation: hs-scan 3.4s ease-in-out infinite;
+        }
+
+        @keyframes hs-scan {
+            0%, 100% { top: 34%; opacity: 0.25; }
+            50% { top: 70%; opacity: 0.95; }
+        }
+
+        .hs-vehicle {
+            position: absolute;
+            width: 24px;
+            height: 48px;
+            border-radius: 6px;
+            background: linear-gradient(180deg, #effff7, #76d6b2);
+            left: 49%;
+            top: 56%;
+            box-shadow: 0 0 30px rgba(53, 212, 154, 0.35);
+            transform: translate(-50%, -50%);
+        }
+
+        .hs-vehicle::before,
+        .hs-vehicle::after {
+            content: "";
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            height: 9px;
+            border-radius: 4px;
+            background: #17382b;
+        }
+
+        .hs-vehicle::before { top: 6px; }
+        .hs-vehicle::after { bottom: 6px; }
+
+        .hs-telemetry {
+            position: absolute;
+            left: 24px;
+            right: 24px;
+            bottom: 22px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .hs-telemetry-card {
+            padding: 13px;
+            border: 1px solid var(--line);
+            background: rgba(5, 12, 9, 0.76);
+            border-radius: 12px;
+        }
+
+        .hs-telemetry-card small {
+            display: block;
+            color: var(--muted);
+            font-size: 9px;
+            letter-spacing: 0.14em;
+        }
+
+        .hs-telemetry-card strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 19px;
+        }
+
+        .hs-alert-chip {
+            position: absolute;
+            right: 24px;
+            top: 68px;
+            padding: 9px 11px;
+            border: 1px solid rgba(231, 189, 103, 0.3);
+            border-radius: 10px;
+            background: rgba(34, 28, 14, 0.86);
+            color: var(--gold);
+            font-size: 9px;
+            letter-spacing: 0.12em;
+            font-weight: 800;
+        }
+
+        /* QUICK PREVIEW */
+        .hs-section {
+            position: relative;
+            z-index: 1;
+            padding: 90px 0;
+        }
+
+        .hs-section-heading {
+            max-width: 720px;
+            margin-bottom: 34px;
+        }
+
+        .hs-section-heading p:first-child {
+            color: var(--gold);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            margin-bottom: 12px;
+        }
+
+        .hs-section-heading h2 {
+            font-size: clamp(30px, 4.5vw, 48px);
+            letter-spacing: -0.03em;
+        }
+
+        .hs-section-heading p:last-child {
+            color: var(--muted);
+            margin-top: 13px;
+            line-height: 1.7;
+        }
+
+        .hs-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .hs-preview-card {
+            padding: 24px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(17, 32, 26, 0.88), rgba(9, 18, 14, 0.88));
+            min-height: 190px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .hs-preview-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(53, 212, 154, 0.3);
+        }
+
+        .hs-preview-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            border: 1px solid var(--line);
+            background: rgba(53, 212, 154, 0.07);
+            margin-bottom: 18px;
+            font-size: 18px;
+        }
+
+        .hs-preview-card h3 {
+            font-size: 17px;
+            margin-bottom: 9px;
+        }
+
+        .hs-preview-card p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        /* FLOW */
+        .hs-flow {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .hs-flow-step {
+            border-top: 1px solid var(--line);
+            padding-top: 14px;
+        }
+
+        .hs-flow-step b {
+            display: block;
+            color: var(--green-bright);
+            font-size: 10px;
+            letter-spacing: 0.16em;
+            margin-bottom: 7px;
+        }
+
+        .hs-flow-step span {
+            font-size: 12px;
+            color: #c9d3ce;
+        }
+
+        /* LOGIN OVERLAY */
+        .hs-login-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(2, 7, 5, 0.78);
+            backdrop-filter: blur(10px);
+        }
+
+        .hs-login-overlay.open {
+            display: flex;
+        }
+
+        .hs-login-card {
+            width: min(460px, 100%);
+            max-height: calc(100vh - 48px);
+            overflow-y: auto;
+            border: 1px solid rgba(53, 212, 154, 0.18);
+            border-radius: 22px;
+            background: linear-gradient(155deg, rgba(17, 31, 25, 0.98), rgba(6, 13, 10, 0.99));
+            box-shadow: 0 35px 100px rgba(0, 0, 0, 0.58);
+            padding: 30px;
+            position: relative;
+        }
+
+        .hs-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            border: 1px solid var(--line);
+            background: transparent;
+            color: #cdd8d3;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .hs-login-head {
+            text-align: center;
+            padding: 4px 28px 25px;
+        }
+
+        .hs-login-shield {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 14px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(53, 212, 154, 0.28);
+            border-radius: 14px;
+            background: rgba(53, 212, 154, 0.08);
+            font-size: 22px;
+        }
+
+        .hs-login-head small {
+            color: var(--green-bright);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.18em;
+        }
+
+        .hs-login-head h2 {
+            margin-top: 7px;
+            font-size: 25px;
+        }
+
+        .hs-login-head p {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .hs-form-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .hs-input-group label {
+            display: block;
+            color: #c3cec8;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.13em;
+            margin-bottom: 7px;
+        }
+
+        .hs-input,
+        .hs-password-wrap input {
+            width: 100%;
+            padding: 13px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.09);
+            background: rgba(4, 9, 7, 0.74);
+            color: var(--text);
+            outline: none;
+        }
+
+        .hs-input:focus,
+        .hs-password-wrap input:focus {
+            border-color: rgba(53, 212, 154, 0.42);
+            box-shadow: 0 0 0 3px rgba(53, 212, 154, 0.07);
+        }
+
+        .hs-password-wrap {
+            position: relative;
+        }
+
+        .hs-password-wrap input {
+            padding-right: 52px;
+        }
+
+        .hs-toggle-password {
+            position: absolute;
+            right: 11px;
             top: 50%;
             transform: translateY(-50%);
             border: none;
             background: transparent;
+            color: #aab7b1;
             cursor: pointer;
-            font-size: 18px;
-            opacity: 0.75;
+            font-size: 17px;
         }
 
-        .toggle-password:hover {
-            opacity: 1;
-        }
-
-        .forgot-password {
+        .hs-forgot {
             display: block;
-            margin-top: 10px;
             text-align: right;
-            color: #35d49a;
+            margin-top: 7px;
+            color: var(--green);
+            font-size: 10px;
             text-decoration: none;
-            font-size: 12px;
+        }
+
+        .hs-login-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 7px;
+        }
+
+        .hs-remember {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #8f9d96;
+            font-size: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .hs-remember input {
+            width: 13px;
+            height: 13px;
+            accent-color: var(--green);
             cursor: pointer;
         }
 
-        .forgot-password:hover {
-            text-decoration: underline;
-        }
-
-        .signup-link {
-    margin-top: 16px;
-    text-align: center;
-    color: #aaa;
-    font-size: 12px;
-}
-
-.signup-link a {
-    color: #35d49a;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.signup-link a:hover {
-    text-decoration: underline;
-}
-
-        .reset-box {
-            display: none;
-            margin-top: 18px;
-            padding: 16px;
+        .hs-login-button {
+            width: 100%;
+            margin-top: 4px;
+            padding: 14px;
+            border: none;
             border-radius: 10px;
-            border: 1px solid rgba(53, 212, 154, 0.25);
-            background: rgba(10, 15, 13, 0.8);
+            background: var(--green);
+            color: #07110c;
+            cursor: pointer;
+            font-weight: 900;
+            letter-spacing: 0.05em;
         }
 
-        .reset-box h3 {
-            margin-bottom: 10px;
-            color: #e7bd67;
-            font-size: 14px;
+        .hs-login-message {
+            min-height: 18px;
+            text-align: center;
+            font-size: 10px;
+            margin-top: 10px;
         }
 
-        .reset-box p {
-            font-size: 11px;
-            line-height: 1.5;
-            color: #aaa;
-            margin-bottom: 12px;
+        .hs-signup-link {
+            text-align: center;
+            color: #88958f;
+            font-size: 10px;
+            margin-top: 17px;
         }
 
-        .reset-box button {
+        .hs-signup-link a {
+            color: var(--green);
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        .hs-box {
+            display: none;
+            margin-top: 16px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(53, 212, 154, 0.2);
+            background: rgba(5, 12, 9, 0.72);
+        }
+
+        .hs-box h3 {
+            color: var(--gold);
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .hs-box p {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.55;
+            margin-bottom: 11px;
+        }
+
+        .hs-box button {
             width: 100%;
             padding: 10px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            background: #35d49a;
+            background: var(--green);
             color: #07110c;
-            font-weight: bold;
+            font-weight: 800;
+            font-size: 11px;
+        }
+
+        .hs-system-secure {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 19px;
+            color: #899891;
+            font-size: 9px;
+            letter-spacing: 0.12em;
+        }
+
+        .hs-footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--line);
+            padding: 26px 0 34px;
+            color: #73827a;
+            font-size: 9px;
+            letter-spacing: 0.12em;
+        }
+
+        @media (max-width: 900px) {
+            .hs-hero {
+                grid-template-columns: 1fr;
+                padding-top: 24px;
+            }
+
+            .hs-preview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hs-flow {
+                grid-template-columns: 1fr 1fr;
+                row-gap: 22px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hs-container {
+                width: min(100% - 24px, 1160px);
+            }
+
+            .hs-nav-link {
+                display: none;
+            }
+
+            .hs-visual {
+                min-height: 390px;
+            }
+
+            .hs-telemetry {
+                grid-template-columns: 1fr;
+            }
+
+            .hs-telemetry-card {
+                display: none;
+            }
+
+            .hs-login-card {
+                padding: 23px;
+                border-radius: 17px;
+            }
+
+            .hs-hero {
+                min-height: auto;
+                padding-bottom: 60px;
+            }
         }
     </style>
 </head>
 
 <body>
+<div class="hs-page">
+    <div class="hs-grid"></div>
+    <div class="hs-glow one"></div>
+    <div class="hs-glow two"></div>
 
-    <main class="login-page">
-
-        <div class="background-glow glow-one"></div>
-        <div class="background-glow glow-two"></div>
-
-        <section class="login-card">
-
-            <div class="security-icon">
-                🛡️
+    <div class="hs-container">
+        <nav class="hs-nav">
+            <div class="hs-brand">
+                <div class="hs-brand-mark">🛡️</div>
+                <div>
+                    <strong>HYPER-SPEED</strong>
+                    <span>EARLY WARNING SYSTEM</span>
+                </div>
             </div>
 
-            <p class="system-label">
-                ADVANCED VEHICLE MONITORING
-            </p>
+            <div class="hs-nav-actions">
+                <a class="hs-nav-link" href="#preview">QUICK PREVIEW</a>
+                <button class="hs-nav-button" type="button" id="topLoginButton">
+                    ACCESS SYSTEM
+                </button>
+            </div>
+        </nav>
 
-            <h1>HYPER-SPEED</h1>
+        <main>
+            <section class="hs-hero">
+                <div>
+                    <p class="hs-kicker">ADVANCED VEHICLE MONITORING</p>
 
-            <h2>EARLY WARNING SYSTEM</h2>
+                    <h1>
+                        See the threat<br>
+                        <span>before it arrives.</span>
+                    </h1>
 
-            <div class="divider"></div>
+                    <p class="hs-hero-copy">
+                        Hyper-Speed is a vehicle early-warning platform designed to identify
+                        approaching high-speed vehicles, estimate their movement, and provide
+                        an alert before they reach a monitored point.
+                    </p>
 
-            <p class="access-title">
-                SECURE ACCESS
-            </p>
+                    <div class="hs-hero-actions">
+                        <button class="hs-primary" type="button" id="heroLoginButton">
+                            ENTER MONITORING SYSTEM →
+                        </button>
 
+                        <a class="hs-secondary" href="#preview">
+                            SEE HOW IT WORKS
+                        </a>
+                    </div>
 
-            <!-- LOGIN FORM -->
-            <form id="loginForm">
+                    <div class="hs-live-note">
+                        <span class="hs-status-dot"></span>
+                        SYSTEM ARCHITECTURE READY FOR MONITORING
+                    </div>
+                </div>
 
-                <!-- USERNAME -->
-                <div class="input-group">
+                <div class="hs-visual" aria-label="Monitoring system preview">
+                    <div class="hs-monitor-top">
+                        <span>MONITORING PREVIEW</span>
+                        <span>● SYSTEM ONLINE</span>
+                    </div>
 
-                    <label for="username">
-                        USERNAME
-                    </label>
+                    <div class="hs-road"></div>
+                    <div class="hs-scan-line"></div>
+                    <div class="hs-vehicle"></div>
 
+                    <div class="hs-alert-chip">
+                        APPROACH DETECTION
+                    </div>
+
+                    <div class="hs-telemetry">
+                        <div class="hs-telemetry-card">
+                            <small>SPEED</small>
+                            <strong>92 km/h</strong>
+                        </div>
+                        <div class="hs-telemetry-card">
+                            <small>DISTANCE</small>
+                            <strong>180 m</strong>
+                        </div>
+                        <div class="hs-telemetry-card">
+                            <small>ETA</small>
+                            <strong>7.0 s</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="hs-section" id="preview">
+                <div class="hs-section-heading">
+                    <p>QUICK PREVIEW</p>
+                    <h2>From detection to early warning.</h2>
+                    <p>
+                        The platform is designed around one clear workflow:
+                        identify an approaching vehicle, evaluate its movement, and
+                        surface a warning when the monitored speed threshold is crossed.
+                    </p>
+                </div>
+
+                <div class="hs-preview-grid">
+                    <article class="hs-preview-card">
+                        <div class="hs-preview-icon">◉</div>
+                        <h3>Detect & Track</h3>
+                        <p>
+                            Vehicles can be represented through camera/video input,
+                            mapped monitoring data, or simulated sensor data for a
+                            reliable college demonstration.
+                        </p>
+                    </article>
+
+                    <article class="hs-preview-card">
+                        <div class="hs-preview-icon">⌁</div>
+                        <h3>Estimate Movement</h3>
+                        <p>
+                            The monitoring workflow can display vehicle speed,
+                            distance from the monitored point, and estimated
+                            arrival time.
+                        </p>
+                    </article>
+
+                    <article class="hs-preview-card">
+                        <div class="hs-preview-icon">⚠</div>
+                        <h3>Warn Early</h3>
+                        <p>
+                            Vehicles crossing the project's hyper-speed threshold
+                            can trigger a visible warning and become part of the
+                            event history.
+                        </p>
+                    </article>
+                </div>
+
+                <div class="hs-flow" aria-label="System flow preview">
+                    <div class="hs-flow-step">
+                        <b>01</b>
+                        <span>Vehicle detected</span>
+                    </div>
+                    <div class="hs-flow-step">
+                        <b>02</b>
+                        <span>Vehicle tracked</span>
+                    </div>
+                    <div class="hs-flow-step">
+                        <b>03</b>
+                        <span>Speed / distance / ETA</span>
+                    </div>
+                    <div class="hs-flow-step">
+                        <b>04</b>
+                        <span>&gt; 85 km/h check</span>
+                    </div>
+                    <div class="hs-flow-step">
+                        <b>05</b>
+                        <span>Early warning + history</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="hs-footer">
+            HYPER-SPEED EARLY WARNING SYSTEM · MCA MINI PROJECT
+        </footer>
+    </div>
+</div>
+
+<!-- LOGIN -->
+<div class="hs-login-overlay" id="loginOverlay" aria-hidden="true">
+    <section class="hs-login-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+        <button class="hs-close" type="button" id="closeLogin" aria-label="Close">×</button>
+
+        <div class="hs-login-head">
+            <div class="hs-login-shield">🛡️</div>
+            <small>AUTHORIZED SYSTEM ACCESS</small>
+            <h2 id="loginTitle">Secure Monitoring Login</h2>
+            <p>Sign in to open the Hyper-Speed monitoring control center.</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="hs-form-grid">
+                <div class="hs-input-group">
+                    <label for="username">USERNAME</label>
                     <input
+                        class="hs-input"
                         type="text"
                         id="username"
                         placeholder="Enter username"
                         autocomplete="username"
                         required
                     >
-
                 </div>
 
-
-                <!-- PASSWORD -->
-                <div class="input-group">
-
-                    <label for="password">
-                        PASSWORD
-                    </label>
-
-                    <div class="password-wrapper">
-
+                <div class="hs-input-group">
+                    <label for="password">PASSWORD</label>
+                    <div class="hs-password-wrap">
                         <input
                             type="password"
                             id="password"
@@ -169,163 +1024,98 @@
                             autocomplete="current-password"
                             required
                         >
-
                         <button
+                            class="hs-toggle-password"
                             type="button"
-                            class="toggle-password"
                             id="togglePassword"
-                            title="Show password">
-                            👁
-                        </button>
-
+                            title="Show password"
+                            aria-label="Show password"
+                        >👁</button>
                     </div>
-
+                    <div class="hs-login-options">
+                        <label class="hs-remember">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a class="hs-forgot" href="#" id="forgotPassword">Forgot Password?</a>
+                    </div>
                 </div>
 
-
-                <!-- FORGOT PASSWORD -->
-                <a
-                    href="#"
-                    class="forgot-password"
-                    id="forgotPassword">
-                    Forgot Password?
-                </a>
-
-
-                <!-- LOGIN BUTTON -->
-                <button
-                    type="submit"
-                    class="login-button">
-
-                    <span>SECURE LOGIN</span>
-
-                    <span class="arrow">
-                        →
-                    </span>
-
+                <button class="hs-login-button" type="submit">
+                    SECURE LOGIN →
                 </button>
+            </div>
 
+            <p id="loginMessage" class="hs-login-message"></p>
+        </form>
 
-                <p
-                    id="loginMessage"
-                    class="login-message">
-                </p>
+        <p class="hs-signup-link">
+            New user?
+            <a href="#" id="showSignup">SIGN UP</a>
+        </p>
 
-            </form>
+        <div class="hs-box" id="signupBox">
+            <h3>CREATE ACCOUNT</h3>
+            <p>Create your account to access the Hyper-Speed monitoring system.</p>
 
-            <p class="signup-link">
-    New user? <a href="#" id="showSignup">SIGN UP</a>
-</p>
+            <div class="hs-form-grid">
+                <div class="hs-input-group">
+                    <label for="signupUsername">USERNAME</label>
+                    <input class="hs-input" type="text" id="signupUsername"
+                           placeholder="Choose username" autocomplete="username">
+                </div>
 
-<div class="reset-box" id="signupBox">
+                <div class="hs-input-group">
+                    <label for="signupPassword">PASSWORD</label>
+                    <input class="hs-input" type="password" id="signupPassword"
+                           placeholder="Create password" autocomplete="new-password">
+                </div>
 
-    <h3>CREATE ACCOUNT</h3>
+                <div class="hs-input-group">
+                    <label for="confirmPassword">CONFIRM PASSWORD</label>
+                    <input class="hs-input" type="password" id="confirmPassword"
+                           placeholder="Confirm password" autocomplete="new-password">
+                </div>
 
-    <p>
-        Create your account to access the Hyper-Speed monitoring system.
-    </p>
+                <button type="button" id="signupButton">CREATE ACCOUNT</button>
+            </div>
 
-    <div class="input-group">
-        <label for="signupUsername">USERNAME</label>
-        <input
-            type="text"
-            id="signupUsername"
-            placeholder="Choose username"
-            autocomplete="username"
-        >
-    </div>
+            <p id="signupMessage" class="hs-login-message"></p>
 
-    <div class="input-group">
-        <label for="signupPassword">PASSWORD</label>
-        <input
-            type="password"
-            id="signupPassword"
-            placeholder="Create password"
-            autocomplete="new-password"
-        >
-    </div>
+            <p class="hs-signup-link">
+                Already have an account?
+                <a href="#" id="backToLogin">LOGIN</a>
+            </p>
+        </div>
 
-    <div class="input-group">
-        <label for="confirmPassword">CONFIRM PASSWORD</label>
-        <input
-            type="password"
-            id="confirmPassword"
-            placeholder="Confirm password"
-            autocomplete="new-password"
-        >
-    </div>
+        <div class="hs-box" id="resetBox">
+            <h3>PASSWORD RECOVERY</h3>
+            <p>
+                This is a local college-project login.
+                Your demo credentials can be reset here.
+            </p>
+            <button type="button" id="resetButton">RESET TO NEW LOGIN</button>
+        </div>
 
-    <button type="button" id="signupButton">
-        CREATE ACCOUNT
-    </button>
-
-    <p
-        id="signupMessage"
-        class="login-message">
-    </p>
-
-    <p class="signup-link">
-        Already have an account?
-        <a href="#" id="backToLogin">LOGIN</a>
-    </p>
-
+        <div class="hs-system-secure">
+            <span class="hs-status-dot"></span>
+            SYSTEM SECURE
+        </div>
+    </section>
 </div>
 
-
-            <!-- RESET PASSWORD BOX -->
-            <div
-                class="reset-box"
-                id="resetBox">
-
-                <h3>
-                    PASSWORD RECOVERY
-                </h3>
-
-                <p>
-                    This is a local college-project login.
-                    Your demo credentials can be reset here.
-                </p>
-
-                <button
-                    type="button"
-                    id="resetButton">
-                    RESET TO NEW LOGIN
-                </button>
-
-            </div>
-
-
-            <!-- SYSTEM STATUS -->
-            <div class="system-status">
-
-                <span class="status-dot"></span>
-
-                <span>
-                    SYSTEM SECURE
-                </span>
-
-            </div>
-
-
-            <p class="footer-text">
-                AUTHORIZED PERSONNEL ONLY
-            </p>
-
-        </section>
-
-    </main>
-
-    <script>
-    // =====================================
-    // ELEMENTS
-    // =====================================
+<script>
+    const loginOverlay = document.getElementById("loginOverlay");
+    const topLoginButton = document.getElementById("topLoginButton");
+    const heroLoginButton = document.getElementById("heroLoginButton");
+    const closeLogin = document.getElementById("closeLogin");
 
     const loginForm = document.getElementById("loginForm");
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
     const loginMessage = document.getElementById("loginMessage");
-
     const togglePassword = document.getElementById("togglePassword");
+    const rememberMe = document.getElementById("rememberMe");
 
     const forgotPassword = document.getElementById("forgotPassword");
     const resetBox = document.getElementById("resetBox");
@@ -334,54 +1124,93 @@
     const showSignup = document.getElementById("showSignup");
     const signupBox = document.getElementById("signupBox");
     const signupButton = document.getElementById("signupButton");
-
     const signupUsername = document.getElementById("signupUsername");
     const signupPassword = document.getElementById("signupPassword");
     const confirmPassword = document.getElementById("confirmPassword");
-
     const signupMessage = document.getElementById("signupMessage");
     const backToLogin = document.getElementById("backToLogin");
 
+    // Demo-only browser remembering. For production, use secure server sessions/tokens.
+    const SAVED_LOGIN_KEY = "hyperspeed_demo_login";
 
-    // =====================================
-    // SHOW / HIDE PASSWORD
-    // =====================================
+    function loadSavedLogin() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(SAVED_LOGIN_KEY) || "null");
+            if (saved && saved.username && saved.password) {
+                usernameInput.value = saved.username;
+                passwordInput.value = saved.password;
+                rememberMe.checked = true;
+            }
+        } catch (error) {
+            console.warn("Saved login could not be loaded.", error);
+        }
+    }
+
+    function saveLogin(username, password) {
+        if (!rememberMe.checked) {
+            localStorage.removeItem(SAVED_LOGIN_KEY);
+            return;
+        }
+        localStorage.setItem(SAVED_LOGIN_KEY, JSON.stringify({ username, password }));
+    }
+
+    function clearSavedLogin() {
+        localStorage.removeItem(SAVED_LOGIN_KEY);
+        rememberMe.checked = false;
+    }
+
+    function openLogin() {
+        loginOverlay.classList.add("open");
+        loginOverlay.setAttribute("aria-hidden", "false");
+        document.body.classList.add("hs-lock");
+        window.setTimeout(() => usernameInput.focus(), 120);
+    }
+
+    function closeLoginPanel() {
+        loginOverlay.classList.remove("open");
+        loginOverlay.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("hs-lock");
+    }
+
+    loadSavedLogin();
+
+    topLoginButton.addEventListener("click", openLogin);
+    heroLoginButton.addEventListener("click", openLogin);
+    closeLogin.addEventListener("click", closeLoginPanel);
+
+    loginOverlay.addEventListener("click", function (event) {
+        if (event.target === loginOverlay) {
+            closeLoginPanel();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && loginOverlay.classList.contains("open")) {
+            closeLoginPanel();
+        }
+    });
 
     togglePassword.addEventListener("click", function () {
-
         if (passwordInput.type === "password") {
-
             passwordInput.type = "text";
             togglePassword.textContent = "🙈";
             togglePassword.title = "Hide password";
-
         } else {
-
             passwordInput.type = "password";
             togglePassword.textContent = "👁";
             togglePassword.title = "Show password";
         }
     });
 
-
-    // =====================================
-    // LOGIN
-    // =====================================
-
     loginForm.addEventListener("submit", async function (event) {
-
         event.preventDefault();
 
         const username = usernameInput.value.trim();
         const password = passwordInput.value;
 
         if (!username || !password) {
-
-            loginMessage.textContent =
-                "Please enter username and password.";
-
+            loginMessage.textContent = "Please enter username and password.";
             loginMessage.style.color = "#ff526b";
-
             return;
         }
 
@@ -389,7 +1218,6 @@
         loginMessage.style.color = "#e7bd67";
 
         try {
-
             const response = await fetch("/login", {
                 method: "POST",
                 headers: {
@@ -404,157 +1232,91 @@
             const result = await response.json();
 
             if (result.success) {
-
-                loginMessage.textContent =
-                    "ACCESS GRANTED — SYSTEM INITIALIZING...";
-
+                saveLogin(username, password);
+                loginMessage.textContent = "ACCESS GRANTED — SYSTEM INITIALIZING...";
                 loginMessage.style.color = "#35d49a";
 
                 setTimeout(function () {
-
                     window.location.href = "/dashboard";
-
                 }, 700);
-
             } else {
-
-                loginMessage.textContent =
-                    "ACCESS DENIED — " + result.message;
-
+                loginMessage.textContent = "ACCESS DENIED — " + result.message;
                 loginMessage.style.color = "#ff526b";
-
                 passwordInput.value = "";
                 passwordInput.focus();
             }
-
         } catch (error) {
-
-            loginMessage.textContent =
-                "SERVER ERROR — PLEASE TRY AGAIN";
-
+            loginMessage.textContent = "SERVER ERROR — PLEASE TRY AGAIN";
             loginMessage.style.color = "#ff526b";
         }
     });
 
-
-    // =====================================
-    // FORGOT PASSWORD
-    // =====================================
-
     forgotPassword.addEventListener("click", function (event) {
-
         event.preventDefault();
-
         resetBox.style.display = "block";
         signupBox.style.display = "none";
-
     });
-
-
-    // =====================================
-    // RESET DEMO LOGIN
-    // =====================================
 
     resetButton.addEventListener("click", function () {
-
         usernameInput.value = "rehan";
         passwordInput.value = "Rehan@123";
-
         passwordInput.type = "text";
-
         togglePassword.textContent = "🙈";
         togglePassword.title = "Hide password";
-
+        if (rememberMe.checked) {
+            saveLogin(usernameInput.value, passwordInput.value);
+        }
         loginMessage.textContent = "NEW LOGIN READY";
         loginMessage.style.color = "#35d49a";
-
         resetBox.style.display = "none";
     });
 
-
-    // =====================================
-    // SIGN UP
-    // =====================================
-
     showSignup.addEventListener("click", function (event) {
-
         event.preventDefault();
-
         signupBox.style.display = "block";
         resetBox.style.display = "none";
-
         loginMessage.textContent = "";
-
         signupUsername.focus();
     });
 
-
-    // =====================================
-    // BACK TO LOGIN
-    // =====================================
-
     backToLogin.addEventListener("click", function (event) {
-
         event.preventDefault();
 
         signupBox.style.display = "none";
-
         signupMessage.textContent = "";
-
         signupUsername.value = "";
         signupPassword.value = "";
         confirmPassword.value = "";
-
     });
 
-
-    // =====================================
-    // CREATE ACCOUNT
-    // =====================================
-
     signupButton.addEventListener("click", async function () {
-
         const username = signupUsername.value.trim();
         const password = signupPassword.value;
         const confirm = confirmPassword.value;
 
         if (!username || !password || !confirm) {
-
-            signupMessage.textContent =
-                "Please fill in all fields.";
-
+            signupMessage.textContent = "Please fill in all fields.";
             signupMessage.style.color = "#ff526b";
-
             return;
         }
 
         if (username.length < 3) {
-
             signupMessage.textContent =
                 "Username must contain at least 3 characters.";
-
             signupMessage.style.color = "#ff526b";
-
             return;
         }
 
         if (password.length < 6) {
-
             signupMessage.textContent =
                 "Password must contain at least 6 characters.";
-
             signupMessage.style.color = "#ff526b";
-
             return;
         }
 
         if (password !== confirm) {
-
-            signupMessage.textContent =
-                "Passwords do not match.";
-
+            signupMessage.textContent = "Passwords do not match.";
             signupMessage.style.color = "#ff526b";
-
             return;
         }
 
@@ -562,15 +1324,11 @@
         signupMessage.style.color = "#e7bd67";
 
         try {
-
             const response = await fetch("/signup", {
-
                 method: "POST",
-
                 headers: {
                     "Content-Type": "application/json"
                 },
-
                 body: JSON.stringify({
                     username: username,
                     password: password
@@ -580,82 +1338,33 @@
             const result = await response.json();
 
             if (result.success) {
-
                 signupMessage.textContent =
                     "ACCOUNT CREATED — PLEASE LOGIN";
-
                 signupMessage.style.color = "#35d49a";
 
                 setTimeout(function () {
-
                     signupBox.style.display = "none";
-
                     signupUsername.value = "";
                     signupPassword.value = "";
                     confirmPassword.value = "";
-
                     usernameInput.value = username;
                     passwordInput.value = "";
-
                     usernameInput.focus();
 
                     loginMessage.textContent =
                         "ACCOUNT CREATED — PLEASE LOGIN";
-
                     loginMessage.style.color = "#35d49a";
-
                 }, 1200);
-
             } else {
-
                 signupMessage.textContent = result.message;
                 signupMessage.style.color = "#ff526b";
             }
-
         } catch (error) {
-
             signupMessage.textContent =
                 "SERVER ERROR — PLEASE TRY AGAIN";
-
             signupMessage.style.color = "#ff526b";
         }
-
     });
-
-</script>
-
-   <script>
-
-    // your other JavaScript code...
-
-
-    // =====================================
-    // SIGN UP
-    // =====================================
-
-    const showSignupButton =
-        document.getElementById("showSignup");
-
-    const signupBoxElement =
-        document.getElementById("signupBox");
-
-    const signupButtonElement =
-        document.getElementById("signupButton");
-
-    showSignupButton.onclick = function (event) {
-
-        event.preventDefault();
-
-        signupBoxElement.style.display = "block";
-        resetBox.style.display = "none";
-
-        loginMessage.textContent = "";
-    };
-
-    // ...rest of signup code...
-
-
 </script>
 </body>
-
 </html>
